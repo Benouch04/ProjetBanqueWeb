@@ -1,0 +1,88 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription
+{% endblock %}
+
+{% block body %}
+<body class="bg-primary">
+	<div id="layoutAuthentication">
+		<div id="layoutAuthentication_content">
+			<main>
+				<div class="container">
+					<div class="row justify-content-center">
+						<div class="col-lg-7">
+							<div class="card shadow-lg border-0 rounded-lg mt-5">
+								<div class="card-header">
+									<h3 class="text-center font-weight-light my-4">Inscription</h3>
+								</div>
+								<div class="card-body">
+									{{ form_errors(registrationForm) }}
+									{{ form_start(registrationForm) }}
+
+									<div class="row mb-3">
+										<div class="col-md-6">
+											<div class="form-floating mb-3 mb-md-0">
+												{{ form_row(registrationForm.username, {'attr': {'class': 'form-control', 'placeholder': 'login'}}) }}
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="form-floating">
+												{{ form_row(registrationForm.plainPassword,  {'attr': {'class': 'form-control', 'placeholder': 'Password'}}) }}
+											</div>
+										</div>
+									</div>
+									<div class="row mb-3">
+										<div class="col-md-6">
+											<div class="form-floating mb-3 mb-md-0">
+												{{ form_row(registrationForm.lastname, {'attr': {'class': 'form-control', 'placeholder': 'Nom d\'utilisateur'}}) }}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-floating">
+                                                {{ form_row(registrationForm.firstname,  {'attr': {'class': 'form-control', 'placeholder': 'Prenom'}}) }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3 justify-content-center">
+													<div class="col-sm-12 col-md-6">
+														<div class="form-floating">
+															{{ form_row(registrationForm.type, {'attr': {'class': 'form-control', 'placeholder': 'type'}}) }}
+														</div>
+													</div>
+												</div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-12">
+                                            <div class="form-check">
+                                                {{ form_row(registrationForm.ConsentementRGPD, {'label_attr': {'class': 'form-check-label'}, 'attr': {'class': 'form-check-input'}}) }}
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4 mb-0">
+                                        <div class="d-grid">
+                                            <button class="btn btn-primary btn-block" type="submit">S'inscrire</button>
+                                        </div>
+                                    </div>
+                                    			<div class="card-footer text-center py-3">
+									{% if app.user %}
+										{# L'utilisateur est connecté #}
+									{% else %}
+										<div class="small">
+											<a href="{{ path('app_login') }}">Vous avez déjà un compte ? Aller à la connexion</a>
+										</div>
+									{% endif %}
+								</div>
+                                    {{ form_end(registrationForm) }}
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</main>
+						</div>
+						{% block footer %}
+							<!-- Pied de page -->
+						{% endblock %}
+					</div>
+				</body>
+			{% endblock %}

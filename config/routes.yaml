@@ -1,3 +1,11 @@
 controllers:
     resource: ../src/Controller/
     type: attribute
+
+main:
+    path: /
+    controller: App\Controller\MainController::index
+
+user_list:
+    path: /user/list
+    controller: App\Controller\UserController::list
