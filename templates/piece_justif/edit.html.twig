@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Modification d'un contrat
+{% block title %}Modification d'une pièce justificatif
 {% endblock %}
 
 {% block body %}
@@ -19,7 +19,7 @@
 										<form
 											method="post">
 											{{ form_start(form) }}
-											{{ form_row(form.nomContrat) }}								
+											{{ form_row(form.nomPieceJustif) }}								
 											{{ form_row(form.submit) }}
 											{{ form_end(form) }}
 										</form>

@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Calendar;
+use App\Entity\Client;
+use App\Entity\PieceJustif;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -18,7 +20,9 @@ class MainController extends AbstractController
     public function index(EntityManagerInterface $entityManager): Response
     {
         $users = $entityManager->getRepository(Users::class)->findAll();
+        $clients = $entityManager->getRepository(Client::class)->findAll();
         $contrats = $entityManager->getRepository(Contrat::class)->findAll();
+        $pieces = $entityManager->getRepository(PieceJustif::class)->findAll();
         $events = $entityManager->getRepository(Calendar::class)->findAll();
 
         $rdvs = [];
@@ -43,7 +47,9 @@ class MainController extends AbstractController
         return $this->render('main/index.html.twig', [
             'controller_name' => 'MainController',
             'users' => $users,
+            'clients' => $clients,
             'contrats' => $contrats,
+            'pieces' => $pieces,
             'data' => $data,
         ]);
     }

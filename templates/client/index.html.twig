@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Modification d'un contrat
+{% block title %}Modification d'un employé
 {% endblock %}
 
 {% block body %}
@@ -13,13 +13,16 @@
 							<div class="col-lg-5">
 								<div class="card shadow-lg border-0 rounded-lg mt-5">
 									<div class="card-header">
-										<h3 class="text-center font-weight-light my-4">Formulaire de Modification du Contrat</h3>
+										<h3 class="text-center font-weight-light my-4">Formulaire d'ajout d'un client :</h3>
 									</div>
 									<div class="card-body">
-										<form
-											method="post">
+										<form method="post">
 											{{ form_start(form) }}
-											{{ form_row(form.nomContrat) }}								
+											{{ form_row(form.nomClient) }}
+											{{ form_row(form.prenomClient) }}
+                                            {{ form_row(form.adresseClient) }}
+                                            {{ form_row(form.numTel) }}
+                                            {{ form_row(form.situation) }}
 											{{ form_row(form.submit) }}
 											{{ form_end(form) }}
 										</form>

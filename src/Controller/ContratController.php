@@ -80,13 +80,6 @@ class ContratController extends AbstractController
     #[Route('/contrat/list', name: 'contrat_list')]
     public function listContrats(EntityManagerInterface $entityManager): Response
     {
-        $contrats = $entityManager->getRepository(Contrat::class)->findAll();
-        $users = $entityManager->getRepository(Users::class)->findAll();
-
-        return $this->render('main/index.html.twig', [
-            'contrats' => $contrats,
-            'users' => $users
-
-        ]);
+        return $this->redirectToRoute('app_main');
     }
 }

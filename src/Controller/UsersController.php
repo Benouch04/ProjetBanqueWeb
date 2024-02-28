@@ -104,14 +104,7 @@ class UsersController extends AbstractController
     #[Route('/users/list', name: 'users_list')]
     public function listUsers(EntityManagerInterface $entityManager): Response
     {
-        $users = $entityManager->getRepository(Users::class)->findAll();
-        $contrats = $entityManager->getRepository(Contrat::class)->findAll();
-
-
-        return $this->render('main/index.html.twig', [
-            'users' => $users,
-            'contrats' => $contrats,
-        ]);
+        return $this->redirectToRoute('app_main');
     }
     /*
         #[Route("/user/create", name: "user_create", methods: "POST")]

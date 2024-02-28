@@ -87,7 +87,7 @@ class CalendarController extends AbstractController
         ]);
     }
 
-    #[Route("/{id}", name: "calendar_delete", methods: ["DELETE"])]
+    #[Route("/{id}", name: "calendar_delete", methods:["DELETE"])]
     public function delete(Request $request, int $id, EntityManagerInterface $entityManager): Response
     {
         $calendar = $entityManager->getRepository(Calendar::class)->find($id);
