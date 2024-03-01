@@ -26,7 +26,7 @@ class UsersController extends AbstractController
         $user = new Users();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
-
+    
         if ($form->isSubmitted() && $form->isValid()) {
             // encode the plain password
             $user->setPassword(
@@ -35,23 +35,39 @@ class UsersController extends AbstractController
                     $form->get('plainPassword')->getData()
                 )
             );
-
+            $type = $form->get('type')->getData(); 
+            switch ($type) {
+                case 'Conseiller':
+                    $user->setRoles(['ROLE_CONSEILLER']);
+                    break;
+                case 'Agent':
+                    $user->setRoles(['ROLE_AGENT']);
+                    break;
+                case 'Directeur':
+                    $user->setRoles(['ROLE_DIRECTEUR']);
+                    break;
+                // Ajoutez d'autres cas si nécessaire
+                default:
+                    $user->setRoles(['ROLE_USER']); // Un rôle par défaut
+                    break;
+            }
+    
             $entityManager->persist($user);
             $entityManager->flush();
             // do anything else you need here, like send an email
-
+    
             return $userAuthenticator->authenticateUser(
                 $user,
                 $authenticator,
                 $request
             );
         }
-
+    
         return $this->render('registration/register.html.twig', [
             'registrationForm' => $form->createView(),
         ]);
     }
-
+    
     #[Route("/employe/edit/{id}", name: "user_edit")]
     public function editUsers(Request $request, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $entityManager, int $id): Response
     {
@@ -73,7 +89,6 @@ class UsersController extends AbstractController
                     )
                 );
             }
-
             $entityManager->flush();
 
             $this->addFlash('success', 'Les informations de l\'utilisateur ont été modifiées avec succès.');

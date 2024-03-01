@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UsersRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -44,6 +46,14 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 100)]
     private ?string $type = null;
 
+    #[ORM\OneToMany(mappedBy: 'parent', targetEntity: Calendar::class)]
+    private Collection $calendars;
+
+    public function __construct()
+    {
+        $this->calendars = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -80,12 +90,6 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
         $roles = [];
 
         switch ($this->type) {
-            case 'admin':
-                $roles[] = 'ROLE_ADMIN';
-                break;
-            case 'user':
-                $roles[] = 'ROLE_USER';
-                break;
             case 'Conseiller':
                 $roles[] = 'ROLE_CONSEILLER';
                 break;
@@ -185,6 +189,36 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     
     public function setType($type) {
         $this->type = $type;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Calendar>
+     */
+    public function getCalendars(): Collection
+    {
+        return $this->calendars;
+    }
+
+    public function addCalendar(Calendar $calendar): static
+    {
+        if (!$this->calendars->contains($calendar)) {
+            $this->calendars->add($calendar);
+            $calendar->setParent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCalendar(Calendar $calendar): static
+    {
+        if ($this->calendars->removeElement($calendar)) {
+            // set the owning side to null (unless already changed)
+            if ($calendar->getParent() === $this) {
+                $calendar->setParent(null);
+            }
+        }
+
         return $this;
     }
     

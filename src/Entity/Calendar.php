@@ -38,6 +38,9 @@ class Calendar
     #[ORM\Column(length: 7)]
     private ?string $text_color = null;
 
+    #[ORM\ManyToOne(inversedBy: 'calendars')]
+    private ?Users $parent = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -135,6 +138,18 @@ class Calendar
     public function setTextColor(string $text_color): static
     {
         $this->text_color = $text_color;
+
+        return $this;
+    }
+
+    public function getParent(): ?Users
+    {
+        return $this->parent;
+    }
+
+    public function setParent(?Users $parent): static
+    {
+        $this->parent = $parent;
 
         return $this;
     }

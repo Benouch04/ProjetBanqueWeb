@@ -38,6 +38,10 @@ class CalendarController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $user = $this->getUser(); // Supposons que getUser() retourne l'entité de l'utilisateur connecté
+            if ($user) {
+                $calendar->setParent($user); // Utilisez la méthode appropriée pour ajouter l'utilisateur à l'événement
+            }
             $entityManager->persist($calendar);
             $entityManager->flush();
 
@@ -87,7 +91,7 @@ class CalendarController extends AbstractController
         ]);
     }
 
-    #[Route("/{id}", name: "calendar_delete", methods:["DELETE"])]
+    #[Route("/{id}", name: "calendar_delete", methods: ["DELETE"])]
     public function delete(Request $request, int $id, EntityManagerInterface $entityManager): Response
     {
         $calendar = $entityManager->getRepository(Calendar::class)->find($id);
