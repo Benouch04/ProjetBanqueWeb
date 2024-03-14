@@ -13,6 +13,7 @@ use App\Repository\CalendarRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Users;
 use App\Entity\Contrat;
+use App\Entity\Compte;
 
 class MainController extends AbstractController
 {
@@ -23,6 +24,7 @@ class MainController extends AbstractController
         $clients = $entityManager->getRepository(Client::class)->findAll();
         $contrats = $entityManager->getRepository(Contrat::class)->findAll();
         $pieces = $entityManager->getRepository(PieceJustif::class)->findAll();
+        $comptes = $entityManager->getRepository(Compte::class)->findAll();
         $events = $entityManager->getRepository(Calendar::class)->findAll();
 
         $rdvs = [];
@@ -49,6 +51,7 @@ class MainController extends AbstractController
             'users' => $users,
             'clients' => $clients,
             'contrats' => $contrats,
+            'comptes' => $comptes,
             'pieces' => $pieces,
             'data' => $data,
         ]);
