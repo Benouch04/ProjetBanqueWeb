@@ -28,6 +28,9 @@ class Client
     #[ORM\Column(length: 255)]
     private ?string $situation = null;
 
+    #[ORM\ManyToOne(inversedBy: 'clients')]
+    private ?Users $parent = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -89,6 +92,18 @@ class Client
     public function setSituation(string $situation): static
     {
         $this->situation = $situation;
+
+        return $this;
+    }
+
+    public function getParent(): ?Users
+    {
+        return $this->parent;
+    }
+
+    public function setParent(?Users $parent): static
+    {
+        $this->parent = $parent;
 
         return $this;
     }
