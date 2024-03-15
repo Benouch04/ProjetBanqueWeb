@@ -50,15 +50,13 @@ class UsersAuthenticator extends AbstractLoginFormAuthenticator
 
     // Déterminer le tableau de bord de redirection basé sur les rôles de l'utilisateur
     if (in_array('ROLE_ADMIN', $roles)) {
-        $redirectRoute = 'main'; // Remplacez 'admin_dashboard' par la route de votre tableau de bord admin
-    } elseif (in_array('ROLE_USER', $roles)) {
-        $redirectRoute = 'main'; // Remplacez 'user_profile' par la route du profil utilisateur
+        $redirectRoute = 'app_admin'; // Remplacez 'admin_dashboard' par la route de votre tableau de bord admin
     } elseif (in_array('ROLE_CONSEILLER', $roles)) {
-        $redirectRoute = 'main'; // Remplacez 'conseiller_dashboard' par la route de votre tableau de bord conseiller
+        $redirectRoute = 'app_conseiller'; // Remplacez 'conseiller_dashboard' par la route de votre tableau de bord conseiller
     } elseif (in_array('ROLE_AGENT', $roles)) {
-        $redirectRoute = 'main'; // Remplacez 'agent_dashboard' par la route de votre tableau de bord agent
+        $redirectRoute = 'app_agent'; // Remplacez 'agent_dashboard' par la route de votre tableau de bord agent
     } elseif (in_array('ROLE_DIRECTEUR', $roles)) {
-        $redirectRoute = 'main'; // Remplacez 'directeur_dashboard' par la route de votre tableau de bord directeur
+        $redirectRoute = 'app_directeur'; // Remplacez 'directeur_dashboard' par la route de votre tableau de bord directeur
     } else {
         // Si l'utilisateur n'a aucun des rôles ci-dessus ou un rôle par défaut, redirigez vers une page par défaut
         $redirectRoute = 'main'; // Remplacez 'default_route' par la route de la page d'accueil ou une autre page par défaut
