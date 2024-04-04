@@ -62,7 +62,11 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->id;
     }
+    public function getFullName(): string
+    {
 
+        return $this->lastname . ' ' . $this->firstname;
+    }
     public function getUsername(): ?string
     {
         return $this->username;
@@ -187,11 +191,13 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-    public function getType() {
+    public function getType()
+    {
         return $this->type;
     }
-    
-    public function setType($type) {
+
+    public function setType($type)
+    {
         $this->type = $type;
         return $this;
     }
@@ -208,7 +214,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->calendars->contains($calendar)) {
             $this->calendars->add($calendar);
-            $calendar->setParent($this);
+            $calendar->setUsers($this);
         }
 
         return $this;
@@ -218,8 +224,8 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->calendars->removeElement($calendar)) {
             // set the owning side to null (unless already changed)
-            if ($calendar->getParent() === $this) {
-                $calendar->setParent(null);
+            if ($calendar->getUsers() === $this) {
+                $calendar->setUsers(null);
             }
         }
 
@@ -255,5 +261,5 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-    
+
 }

@@ -81,6 +81,6 @@ class PieceJustifController extends AbstractController
     #[Route('/piece/list', name: 'piece_list')]
     public function listPieces(EntityManagerInterface $entityManager): Response
     {
-        return $this->redirectToRoute('app_main');
+        return $this->redirectToRoute('app_directeur');
     }
 }

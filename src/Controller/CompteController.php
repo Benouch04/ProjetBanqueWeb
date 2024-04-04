@@ -8,7 +8,10 @@ use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Compte;
+use App\Entity\CompteClient;
 use App\Form\CompteType;
+use App\Form\CompteClientType;
+use App\Controller\AccessDeniedException;
 
 class CompteController extends AbstractController
 {
@@ -34,9 +37,10 @@ class CompteController extends AbstractController
             return $this->redirectToRoute('main');
         }
 
-        return $this->render('compte/index.html.twig', [
+        return $this->render('main/directeur.html.twig', [
             'form' => $form->createView(),
-            'nomCompte' => $compte->getNomCompte()
+            'nomCompte' => $compte->getNomCompte(),
+            'data_class' => Compte::class
         ]);
     }
     #[Route("/compte/edit/{id}", name: "compte_edit")]
@@ -86,4 +90,50 @@ class CompteController extends AbstractController
     {
         return $this->redirectToRoute('app_main');
     }
+    #[Route('/compte/ouverture', name: 'compte_ouverture')]
+    public function ouvrirCompte(Request $request, EntityManagerInterface $entityManager)
+    {
+        $compteClient = new CompteClient();
+        $form = $this->createForm(CompteClientType::class, $compteClient);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Récupérer l'employé (conseiller) actuellement connecté
+            // Cette partie dépend de la manière dont vous gérez l'authentification
+            $conseiller = $this->getUser();
+
+            // Vérifier si l'utilisateur actuel est bien un conseiller
+            if ($conseiller->getRoles() !== 'Conseiller') {
+                // throw new AccessDeniedException('Seuls les conseillers peuvent ouvrir des comptes.');
+            }
+
+            // Assigner le conseiller au compte client (si votre modèle de données le permet)
+            $compteClient->setClient($conseiller);
+
+            // Assigner le client et le compte récupérés du formulaire à l'objet CompteClient
+            // Ces données devraient être soumises via le formulaire CompteClientType
+            $client = $form->get('client')->getData();
+            $compte = $form->get('compte')->getData();
+            $compteClient->setClient($client);
+            $compteClient->setCompte($compte);
+
+            // Gérer les autres propriétés comme dateOuverture, solde initial, etc.
+            $compteClient->setDateOuverture(new \DateTime());
+            $compteClient->setSolde(0);
+
+            $entityManager->persist($compteClient);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Le compte a été ouvert avec succès.');
+
+            // Rediriger vers une page appropriée
+            return $this->redirectToRoute('quelque_route');
+        }
+
+        return $this->render('main/conseiller.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
 }

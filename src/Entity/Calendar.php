@@ -39,7 +39,10 @@ class Calendar
     private ?string $text_color = null;
 
     #[ORM\ManyToOne(inversedBy: 'calendars')]
-    private ?Users $parent = null;
+    private ?Users $users = null;
+
+    #[ORM\ManyToOne(inversedBy: 'calendars')]
+    private ?Client $clients = null;
 
     public function getId(): ?int
     {
@@ -142,14 +145,26 @@ class Calendar
         return $this;
     }
 
-    public function getParent(): ?Users
+    public function getUsers(): ?Users
     {
-        return $this->parent;
+        return $this->users;
     }
 
-    public function setParent(?Users $parent): static
+    public function setUsers(?Users $users): static
     {
-        $this->parent = $parent;
+        $this->users = $users;
+
+        return $this;
+    }
+
+    public function getClients(): ?Client
+    {
+        return $this->clients;
+    }
+
+    public function setClients(?Client $clients): static
+    {
+        $this->clients = $clients;
 
         return $this;
     }

@@ -5,294 +5,168 @@
 
 
 {% block body %}
-	<div class="sb-nav-fixed">
-		<nav
-			class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-			<!-- Navbar Brand-->
-			{% if app.user %}
-				<a class="navbar-brand ps-3" href="index.html">{{ app.user.firstname }}
-					{{ app.user.lastname }}</a>
-			{% else %}
-				<a class="navbar-brand ps-3" href="index.html">Invité</a>
-			{% endif %}
-			<!-- Sidebar Toggle-->
-			<button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!">
-				<i class="fas fa-bars"></i>
-			</button>
-			<!-- Navbar Search-->
-			<form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
-				<div class="input-group">
-					<input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..." aria-describedby="btnNavbarSearch"/>
-					<button class="btn btn-primary" id="btnNavbarSearch" type="button">
-						<i class="fas fa-search"></i>
-					</button>
+	<div id="layoutSidenav_content">
+		<main>
+			{% for message in app.flashes('danger') %}
+				<div class="alert alert-danger" role="alert">
+					{{ message }}
 				</div>
-			</form>
-			<!-- Navbar-->
-			<ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
-				<li class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-						<i class="fas fa-user fa-fw"></i>
-					</a>
-					<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-						<li>
-							<a class="dropdown-item" href="#!">Settings</a>
-						</li>
-						<li>
-							<a class="dropdown-item" href="#!">Activity Log</a>
-						</li>
-						<li><hr class="dropdown-divider"/></li>
-						<li>
-							<a class="dropdown-item" href="{{ path('app_logout') }}">Logout</a>
-						</li>
-					</ul>
-				</li>
-			</ul>
-		</nav>
-		<div id="layoutSidenav">
-			<div id="layoutSidenav_nav">
-				<nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
-					<div class="sb-sidenav-menu">
-						<div class="nav">
-							<div class="sb-sidenav-menu-heading">Core</div>
-							<a class="nav-link" href="index.html">
-								<div class="sb-nav-link-icon">
-									<i class="fas fa-tachometer-alt"></i>
-								</div>
-								Dashboard
-							</a>
-							<div class="sb-sidenav-menu-heading">Ajout</div>
-							<a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayout" aria-expanded="false" aria-controls="collapseLayouts">
-								<div class="sb-nav-link-icon">
-									<i class="fas fa-columns"></i>
-								</div>
-								Client
-								<div class="sb-sidenav-collapse-arrow">
-									<i class="fas fa-angle-down"></i>
-								</div>
-							</a>
-							<div class="sb-sidenav-menu-heading">Interface</div>
-							<a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
-								<div class="sb-nav-link-icon">
-									<i class="fas fa-columns"></i>
-								</div>
-								Layouts
-								<div class="sb-sidenav-collapse-arrow">
-									<i class="fas fa-angle-down"></i>
-								</div>
-							</a>
-							<div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
-								<nav class="sb-sidenav-menu-nested nav">
-									<a class="nav-link" href="layout-static.html">Static Navigation</a>
-									<a class="nav-link" href="layout-sidenav-light.html">Light Sidenav</a>
-								</nav>
-							</div>
-							<a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
-								<div class="sb-nav-link-icon">
-									<i class="fas fa-book-open"></i>
-								</div>
-								Employé
-								<div class="sb-sidenav-collapse-arrow">
-									<i class="fas fa-angle-down"></i>
-								</div>
-							</a>
-							<div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
-								<nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
-									<a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseAuth" aria-expanded="false" aria-controls="pagesCollapseAuth">
-										Authentication
-										<div class="sb-sidenav-collapse-arrow">
-											<i class="fas fa-angle-down"></i>
-										</div>
-									</a>
-									<div class="collapse" id="pagesCollapseAuth" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordionPages">
-										<nav class="sb-sidenav-menu-nested nav">
-											<a class="nav-link" href="{{ path('app_login') }}">Login</a>
-											<a class="nav-link" href="{{ path('user_ajout') }}">Register</a>
-											<a class="nav-link" href="password.html">Forgot Password</a>
-										</nav>
+			{% endfor %}
+			{% for message in app.flashes('error') %}
+				<div class="alert alert-danger" role="alert">
+					{{ message }}
+				</div>
+			{% endfor %}
+			{% for message in app.flashes('success') %}
+				<div class="alert alert-success" role="alert">
+					{{ message }}
+				</div>
+			{% endfor %}
+			<div class="container-fluid px-4">
+				<h1 class="mt-4">Dashboard du Conseiller</h1>
+				<ol class="breadcrumb mb-4">
+					<li class="breadcrumb-item active">Dashboard</li>
+				</ol>
+				<div class="row">
+					<div class="col-xl-6">
+						<div class="card mb-4">
+							<div class="card-header">
+								<div class="d-flex justify-content-between align-items-center">
+									<div class="d-flex align-items-center">
+										<i class="fa-solid fa-user me-1"></i>
+										<span>Clients</span>
 									</div>
-									{% if app.user %}
-										<a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseEmploye" aria-expanded="false" aria-controls="pagesCollapseEmploye">
-											Modification
-											<div class="sb-sidenav-collapse-arrow">
-												<i class="fas fa-angle-down"></i>
-											</div>
-										</a>
-
-										<div class="collapse" id="pagesCollapseEmploye" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordionPages">
-											<nav class="sb-sidenav-menu-nested nav">
-												<a class="nav-link" href="{{ path('user_edit', {'id': app.user.id}) }}">Login</a>
-												<a class="nav-link" href="404.html">Mot de passe</a>
-											</nav>
+									<div class="d-flex">
+										{{ form_start(search_form, {'attr': {'class': 'd-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0 search-container'}}) }}
+										<div class="input-group">
+											{{ form_widget(search_form.query, {'attr': {'class': 'form-control search-input', 'placeholder': 'Rechercher un client...'}}) }}
+											<button class="btn btn-primary" type="submit" id="btnNavbarSearch">
+												<i class="fas fa-search"></i>
+											</button>
+											{{ form_end(search_form) }}
 										</div>
-									{% endif %}
-								</nav>
-							</div>
-							<div class="sb-sidenav-menu-heading">Addons</div>
-							<a class="nav-link" href="charts.html">
-								<div class="sb-nav-link-icon">
-									<i class="fas fa-chart-area"></i>
-								</div>
-								Charts
-							</a>
-							<a class="nav-link" href="tables.html">
-								<div class="sb-nav-link-icon">
-									<i class="fas fa-table"></i>
-								</div>
-								Tables
-							</a>
-						</div>
-					</div>
-					<div class="sb-sidenav-footer">
-						{% if app.user %}
-							<div class="small">Connecté en tant que :
-								{{ app.user.username }}</div>
-							<div class="small">Rôles :
-								{% for role in app.user.roles %}
-									{{ role }}
-									{% if not loop.last %},
-									{% endif %}
-								{% endfor %}
-							</div>
-						{% else %}
-							<div class="small">Vous n'êtes pas connecté.</div>
-						{% endif %}
-					</div>
-				</nav>
-			</div>
-			<div id="layoutSidenav_content">
-				<main>
-					<div class="container-fluid px-4">
-						<h1 class="mt-4">Dashboard du Conseiller</h1>
-						<ol class="breadcrumb mb-4">
-							<li class="breadcrumb-item active">Dashboard</li>
-						</ol>
-						<div class="row">
-
-							<div class="col-xl-6">
-								<div class="card mb-4">
-									<div class="card-header">
-										<div class="d-flex justify-content-between align-items-center">
-											<div>
-												<i class="fa-solid fa-solid fa-user me-1"></i>
-												Clients
-											</div>
-											<div class="input-group">
-												<input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..." aria-describedby="btnNavbarSearch"/>
-												<button class="btn btn-primary" id="btnNavbarSearch" type="button">
-													<i class="fas fa-search"></i>
-												</button>
-											</div>
-											
-										</div>
-									</div>
-
-									<table class="table">
-										<thead>
-											<tr class="text-center">
-												<th>ID</th>
-												<th>Nom du Client</th>
-												<th></th>
-												<th>Actions</th>
-												<th><form action="{{ path('client_ajout') }}" method="post">
-												<button type="submit" class="btn btn-success">Créer</button>
-											</form></th>
-											</tr>
-										</thead>
-										<tbody>
-											{% for client in clients %}
-												<tr class="text-center">
-													<td>{{ client.id }}</td>
-													<td>{{ client.nomClient }}</td>
-													<td></td>
-													<td>
-														<form action="{{ path('client_list', {'id': client.id}) }}" method="post" style="display: inline;">
-															<button type="submit" class="btn btn-info">Infos</button>
-														</form>
-														|
-														<form action="{{ path('client_edit', {'id': client.id}) }}" method="post" style="display: inline;">
-															<button type="submit" class="btn btn-warning">Modifier</button>
-														</form>
-														|
-														<form action="{{ path('client_delete', {'id': client.id}) }}" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce client ?');" style="display: inline;">
-															<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ client.id) }}">
-															<button type="submit" class="btn btn-danger">Supprimer</button>
-														</form>
-													</td>
-												</tr>
-											{% else %}
-												<tr>
-													<td colspan="4">Aucun client trouvé.</td>
-												</tr>
-											{% endfor %}
-										</tbody>
-									</table>
-								</div>
-							</div>
-
-							<div class="card mb-4">
-								<div class="card-header">
-									<div class="d-flex justify-content-between align-items-center">
-										<div>
-											<i class="fa-solid fa-table me-1"></i>
-											Rendez vous
-										</div>
-										<form action="{{ path('calendar_new') }}" method="post">
-											<button type="submit" class="btn btn-success">Ajouter</button>
+										<form action="{{ path('client_ajout') }}" method="post" class="ms-2">
+											<button type="submit" class="btn btn-success">Créer</button>
 										</form>
 									</div>
 								</div>
+							</div>
+
+
+							<table class="table">
+								<thead>
+									<tr class="text-center">
+										<th>ID</th>
+										<th>Nom du Client</th>
+										<th></th>
+										<th>Actions</th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for client in clients %}
+										<tr class="text-center">
+											<td>{{ client.id }}</td>
+											<td>{{ client.nomClient }}</td>
+											<td></td>
+											<td>
+												<form action="{{ path('client_infos', {'id': client.id}) }}" method="post" style="display: inline;">
+													<button type="submit" class="btn btn-info">Infos</button>
+												</form>
+												|
+												<form action="{{ path('client_edit', {'id': client.id}) }}" method="post" style="display: inline;">
+													<button type="submit" class="btn btn-warning">Modifier</button>
+												</form>
+												|
+												<form action="{{ path('client_delete', {'id': client.id}) }}" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce client ?');" style="display: inline;">
+													<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ client.id) }}">
+													<button type="submit" class="btn btn-danger">Supprimer</button>
+												</form>
+											</td>
+										</tr>
+									{% else %}
+										<tr>
+											<td colspan="4">Aucun client trouvé.</td>
+										</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+							<nav aria-label="Page navigation">
+								<ul
+									class="pagination">
+									{# Previous page link #}
+									<li class="page-item {% if currentPage <= 1 %}disabled{% endif %}">
+										<a class="page-link" href="{{ path('app_conseiller', {'page': currentPage - 1}) }}" aria-label="Previous">
+											<span aria-hidden="true">&laquo;</span>
+										</a>
+									</li>
+
+									{# Page numbers #}
+									{% for i in 1..totalPages %}
+										<li class="page-item {% if i == currentPage %}active{% endif %}">
+											<a class="page-link" href="{{ path('app_conseiller', {'page': i}) }}">{{ i }}</a>
+										</li>
+									{% endfor %}
+
+									{# Next page link #}
+									<li class="page-item {% if currentPage >= totalPages %}disabled{% endif %}">
+										<a class="page-link" href="{{ path('app_conseiller', {'page': currentPage + 1}) }}" aria-label="Next">
+											<span aria-hidden="true">&raquo;</span>
+										</a>
+									</li>
+								</ul>
+							</nav>
+						</div>
+					</div>
+					<div class="col-xl-6">
+						<div class="card mb-4">
+							<div class="card-header">
+								<div class="d-flex justify-content-between align-items-center">
+									<div>
+										<i class="fa-solid fa-table me-1"></i>
+										Planning
+									</div>
+									<form action="{{ path('calendar_new') }}" method="post">
+										<button type="submit" class="btn btn-success">Ajouter</button>
+									</form>
+								</div>
+							</div>
+							<div class="card-body">
 								<div class="card-body">
-									<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
-									<div id="calendar"></div>
+									<form action="{{ path('choix_conseiller_planning') }}" method="get">
+										<label for="conseillerSelect">Conseiller :
+										</label>
+										<select name="id" id="conseillerSelect" class="form-select mr-8">
+											{% for conseiller in conseillers %}
+												<option value="{{ conseiller.id }}">{{ conseiller.firstname }}
+													{{ conseiller.lastname }}</option>
+											{% endfor %}
+										</select>
+										<div class="d-flex justify-content-center mt-3">
+											<button type="submit" class="btn btn-primary">Rechercher</button>
+										</div>
+									</form>
 								</div>
 							</div>
 						</div>
-					</main>
+					</div>
+
 				</div>
-			</div>
-			{% block script %}
-				<script>
-					document.addEventListener('DOMContentLoaded', function () {
-var calendarEl = document.getElementById('calendar');
-var calendar = new FullCalendar.Calendar(calendarEl, {
-initialView: 'dayGridMonth',
-locale: 'fr',
-timeZone: 'Europe/Paris',
-headerToolbar: {
-start: 'prev,next today',
-center: 'title',
-end: 'dayGridMonth,timeGridWeek'
-},
-events: {{ data | raw }},
-editable: true,
-eventResizableFromStart: true,
-eventClick: function (info) { // Redirection vers la route 'calendar' avec l'ID de l'événement
-window.location.href = `/calendar/${
-info.event.id
-}`;
-
-}
-});
-
-calendar.render();
-});
-				</script>
-			{% endblock %}
-		{% endblock %}
+			</main>
+		</div>
+	{% endblock %}
 
 
-		{% block footer %}
-			<div class="py-4 bg-light mt-auto">
-				<div class="container-fluid px-4">
-					<div class="d-flex align-items-center justify-content-between small">
-						<div class="text-muted">Copyright &copy; Your Website 2023</div>
-						<div>
-							<a href="#">Privacy Policy</a>
-							&middot;
-							<a href="#">Terms &amp; Conditions</a>
-						</div>
+	{% block footer %}
+		<div class="py-4 bg-light mt-auto">
+			<div class="container-fluid px-4">
+				<div class="d-flex align-items-center justify-content-between small">
+					<div class="text-muted">Copyright &copy; Your Website 2023</div>
+					<div>
+						<a href="#">Privacy Policy</a>
+						&middot;
+						<a href="#">Terms &amp; Conditions</a>
 					</div>
 				</div>
 			</div>
-		{% endblock %}
+		</div>
+	{% endblock %}

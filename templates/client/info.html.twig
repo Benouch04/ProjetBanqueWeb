@@ -1,0 +1,110 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modification d'un contrat
+{% endblock %}
+
+{% block body %}
+	<div id="layoutSidenav_content" class="justify-content-center bg-light">
+		<main>
+			<div class="container-fluid px-4">
+				<div class="row justify-content-center">
+					<div class="col-xl-6">
+						<div class="card">
+							<div class="card-header bg-primary">
+								<h3 class="text-center text-white font-weight-light my-4">Synthèse du Client</h3>
+							</div>
+							<div class="card-body">
+								<form method="post">
+									<div class="form-group row mb-2">
+										<label class="col-sm-3 col-form-label" for="{{ form.nomClient.vars.id }}">Nom</label>
+										<div class="col-sm-8">
+											{{ form_widget(form.nomClient, {'attr': {'class': 'form-control', 'disabled': true}}) }}
+										</div>
+									</div>
+									<div class="form-group row mb-2">
+										<label class="col-sm-3 col-form-label" for="{{ form.prenomClient.vars.id }}">Prénom</label>
+										<div class="col-sm-8">
+											{{ form_widget(form.prenomClient, {'attr': {'class': 'form-control', 'disabled': true}}) }}
+										</div>
+									</div>
+									<div class="form-group row mb-2">
+										<label class="col-sm-3 col-form-label" for="{{ form.adresseClient.vars.id }}">Adresse</label>
+										<div class="col-sm-8">
+											{{ form_widget(form.adresseClient, {'attr': {'class': 'form-control', 'disabled': true}}) }}
+										</div>
+									</div>
+									<div class="form-group row mb-2">
+										<label class="col-sm-3 col-form-label" for="{{ form.numTel.vars.id }}">Num Tel</label>
+										<div class="col-sm-8">
+											{{ form_widget(form.numTel, {'attr': {'class': 'form-control', 'disabled': true}}) }}
+										</div>
+									</div>
+									<div class="form-group row mb-2">
+										<label class="col-sm-3 col-form-label" for="{{ form.situation.vars.id }}">Situation</label>
+										<div class="col-sm-8">
+											{{ form_widget(form.situation, {'attr': {'class': 'form-control', 'disabled': true}}) }}
+										</div>
+									</div>
+									<a href="{{ path('app_conseiller') }}" class="btn btn-link">Retour au Dashboard</a>
+								</form>
+							</div>
+						</div>
+					</div>
+					<div class="col-xl-6">
+						<div class="card">
+							<div class="card-header bg-primary">
+								<h3 class="text-center text-white font-weight-light my-4">Planning</h3>
+							</div>
+							<div class="card-body">
+
+								<div
+									class="form-group row align-items-center">
+									<!-- Label -->
+									<label class="col-form-label col-sm-4">Nom du conseiller :</label>
+
+									<!-- Input field -->
+									<div class="col-sm-5">
+										{{ form_widget(form.parent, {'attr': {'class': 'form-control', 'disabled': true}}) }}
+									</div>
+
+									<!-- Button, assuming it should be the same height and alignment -->
+									<div class="col-sm-3 text-right">
+										<a href="{{ path('conseiller_planning', {'id': conseiller.id}) }}" class="btn btn-primary">Visualiser</a>
+									</div>
+									<hr style="margin-top: 20px; margin-bottom: 20px;">
+									<div class="row justify-content-center">
+										<div class="col-lg-6">
+											<form action="{{ path('calendar_new', {'clientId': client.id}) }}" method="post">
+												<button type="submit" class="btn btn-success w-100">Prendre un rendez-vous</button>
+											</form>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-xl-6">
+						<div class="card mt-2">
+							<div class="card-header bg-primary">
+								<h3 class="text-center text-white font-weight-light my-4">Solde du Client</h3>
+							</div>
+							<div class="card-body"></div>
+						</div>
+					</div>
+					<div class="col-xl-6">
+						<div class="card mt-2">
+							<div class="card-header bg-primary">
+								<h3 class="text-center text-white font-weight-light my-4">Dépôt/Retrait sur un compte</h3>
+							</div>
+							<div class="card-body">{{ form_widget(formCompte.compte) }}
+								{{ form_widget(formCompte.typeOp) }}
+								{{ form_widget(formCompte.montant) }}
+								{{ form_widget(formCompte.submit) }}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+</div>{% endblock %}

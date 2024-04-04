@@ -2,13 +2,20 @@
 
 namespace App\Controller;
 
+use App\Entity\Users;
+use App\Form\ClientInfoType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Client;
+use App\Entity\CompteClient;
+use App\Entity\Calendar;
 use App\Form\ClientType;
+use App\Form\CompteClientType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 
 class ClientController extends AbstractController
@@ -29,15 +36,13 @@ class ClientController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $user = $this->getUser(); 
-            if ($user) {
-                $client->setParent($user); 
-            }
+
             $entityManager->persist($client);
             $entityManager->flush();
 
+            $this->addFlash('success', 'Le client a été ajouté avec succès');
             // Redirection ou affichage d'un message de succès
-            return $this->redirectToRoute('main');
+            return $this->redirectToRoute('client_list');
         }
 
         return $this->render('client/index.html.twig', [
@@ -46,27 +51,25 @@ class ClientController extends AbstractController
             'prenomClient' => $client->getPrenomClient(),
             'adresseClient' => $client->getAdresseClient(),
             'numTel' => $client->getNumTel(),
-            'situation' => $client->getSituation(),
+            'situation' => $client->getSituation()
         ]);
     }
     #[Route("/client/edit/{id}", name: "client_edit")]
-    public function editUsers(Request $request, EntityManagerInterface $entityManager, int $id): Response
+    public function editClient(Request $request, EntityManagerInterface $entityManager, int $id): Response
     {
         $client = $entityManager->getRepository(Client::class)->find($id);
 
         $form = $this->createForm(ClientType::class, $client);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
             // Mettre à jour le client
             $client->setNomClient($form->get('nomClient')->getData());
             $client->setPrenomClient($form->get('prenomClient')->getData());
-            $client->setNumTel($form->get('numTel')->getData());
+
             $client->setAdresseClient($form->get('adresseClient')->getData());
+            $client->setNumTel($form->get('numTel')->getData());
             $client->setSituation($form->get('situation')->getData());
             $entityManager->flush();
-
-            $this->addFlash('success', 'Les informations du client ont été modifiées avec succès.');
 
             return $this->redirectToRoute('client_list');
         }
@@ -76,6 +79,7 @@ class ClientController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+
     #[Route("/client/delete/{id}", name: "client_delete", methods: ["POST"])]
     public function deleteContrat(int $id, EntityManagerInterface $entityManager): Response
     {
@@ -95,9 +99,67 @@ class ClientController extends AbstractController
 
         return $this->redirectToRoute('client_list');
     }
+    #[Route('/search', name: 'client_search')]
+    public function searchClient(Request $request, EntityManagerInterface $entityManager)
+    {
+        $searchForm = $this->createFormBuilder(null)
+            ->add('query', TextType::class)
+            ->getForm();
+
+        $searchForm->handleRequest($request);
+
+        if ($searchForm->isSubmitted() && $searchForm->isValid()) {
+            $query = $searchForm->getData()['query'];
+            $client = $entityManager->getRepository(Client::class)->findOneBy(['nomClient' => $query]);
+
+            if ($client) {
+                return $this->redirectToRoute('client_infos', ['id' => $client->getId()]);
+            } else {
+                // Si le client n'est pas trouvé, ajoutez un message flash
+                $this->addFlash(
+                    'danger', // Le type de message, peut être 'danger', 'warning', 'success', etc.
+                    'Aucun client trouvé avec le nom ' . $query
+                );
+
+                // Redirigez l'utilisateur là où vous voulez, par exemple :
+                return $this->redirectToRoute('app_conseiller');
+            }
+        }
+
+        // Assurez-vous de retourner le formulaire de recherche pour qu'il soit rendu si aucune recherche n'a été faite ou si le formulaire n'est pas valide.
+        return $this->render('main/conseiller.html.twig', [
+            'searchForm' => $searchForm->createView(),
+        ]);
+    }
     #[Route('/client/list', name: 'client_list')]
     public function listClients(EntityManagerInterface $entityManager): Response
     {
-        return $this->redirectToRoute('app_main');
+        return $this->redirectToRoute('app_conseiller');
     }
+    // Dans ClientController.php ou le contrôleur qui gère l'affichage des infos client
+
+    #[Route('/client/infos/{id}', name: 'client_infos')]
+    public function show($id, EntityManagerInterface $entityManager): Response
+    {
+        $client = $entityManager->getRepository(Client::class)->find($id);
+        $user = $entityManager->getRepository(Users::class)->find($id);
+        $form = $this->createForm(ClientInfoType::class, $client);
+        $compte = $entityManager->getRepository(CompteClient::class)->find($id);
+        $formCompte = $this->createForm(CompteClientType::class, $compte);
+        if (!$client) {
+            throw $this->createNotFoundException('Le client n\'a pas été trouvé.');
+        }
+
+        $conseiller = $client->getParent();
+
+
+        return $this->render('client/info.html.twig', [
+            'client' => $client,
+            'user' => $user,
+            'form' => $form->createView(),
+            'formCompte' => $formCompte->createView(),
+            'conseiller' => $conseiller,
+        ]);
+    }
+
 }

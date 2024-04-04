@@ -11240,3 +11240,28 @@ body {
   font-size: 0.75rem;
   border-radius: 0.375rem !important;
 }
+.intl-tel-input {
+  width: 100%;
+}
+
+/* Adapter le champ de saisie pour s'aligner avec les autres champs de formulaire Bootstrap */
+.intl-tel-input .form-control {
+  border-radius: 0.25rem; /* Correspond à la norme Bootstrap */
+}
+
+/* Si vous avez besoin d'ajuster la hauteur du champ pour qu'il corresponde à Bootstrap */
+.intl-tel-input .form-control,
+.intl-tel-input .iti {
+  height: calc(2.25rem + 2px); /* Hauteur standard des champs de formulaire Bootstrap */
+}
+
+/* Adapter la liste déroulante des drapeaux */
+.intl-tel-input .selected-flag {
+  padding: 0.375rem;
+}
+
+/* Correction des marges pour le champ de numéro de téléphone */
+.intl-tel-input .input-group .form-control {
+  position: relative; /* Si nécessaire pour fixer des problèmes de positionnement */
+  margin-bottom: 0; /* Supprimer le margin-bottom si le form-group s'en occupe déjà */
+}

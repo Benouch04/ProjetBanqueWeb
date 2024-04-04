@@ -4,52 +4,81 @@
 {% endblock %}
 
 {% block body %}
-	<h1>Calendar</h1>
+	<div id="layoutSidenav_content" class="justify-content-center bg-light">
+		<main>
+		{% for message in app.flashes('error') %}
+				<div class="alert alert-danger" role="alert">
+					{{ message }}
+				</div>
+			{% endfor %}
+			{% for message in app.flashes('success') %}
+				<div class="alert alert-success" role="alert">
+					{{ message }}
+				</div>
+			{% endfor %}
+			<div class="container-fluid px-4">
+				<div class="row justify-content-center">
+					<div class="col-xl-12">
+						<div class="card mb-4">
+							<div class="card-header">
+								<h3 class="text-center">Synthèse du rendez vous</h3>
+							</div>
+							<table class="table">
+								<tbody>
+									<tr>
+										<th>Id</th>
+										<td>{{ calendar.id }}</td>
+									</tr>
+									<tr>
+										<th>Title</th>
+										<td>{{ calendar.title }}</td>
+									</tr>
+									<tr>
+										<th>Start</th>
+										<td>{{ calendar.start ? calendar.start|date('Y-m-d H:i:s') : '' }}</td>
+									</tr>
+									<tr>
+										<th>End</th>
+										<td>{{ calendar.end ? calendar.end|date('Y-m-d H:i:s') : '' }}</td>
+									</tr>
+									<tr>
+										<th>Description</th>
+										<td>{{ calendar.description }}</td>
+										
+											<a href="{{ path('calendar_accept', {'id': calendar.id}) }}" class="btn btn-success">Accepter</a>
+											<a href="{{ path('calendar_reject', {'id': calendar.id}) }}" class="btn btn-danger">Rejeter</a>
+										
+									</tr>
+									<tr>
+										<th>All_day</th>
+										<td>{{ calendar.allDay ? 'Yes' : 'No' }}</td>
+									</tr>
+									<tr>
+										<th>Background_color</th>
+										<td>{{ calendar.backgroundColor }}</td>
+									</tr>
+									<tr>
+										<th>Border_color</th>
+										<td>{{ calendar.borderColor }}</td>
+									</tr>
+									<tr>
+										<th>Text_color</th>
+										<td>{{ calendar.textColor }}</td>
+									</tr>
+								</tbody>
+							</table>
+							<div></div>
+							<a href="{{ path('calendar_index') }}">back to list</a>
 
-	<table class="table">
-		<tbody>
-			<tr>
-				<th>Id</th>
-				<td>{{ calendar.id }}</td>
-			</tr>
-			<tr>
-				<th>Title</th>
-				<td>{{ calendar.title }}</td>
-			</tr>
-			<tr>
-				<th>Start</th>
-				<td>{{ calendar.start ? calendar.start|date('Y-m-d H:i:s') : '' }}</td>
-			</tr>
-			<tr>
-				<th>End</th>
-				<td>{{ calendar.end ? calendar.end|date('Y-m-d H:i:s') : '' }}</td>
-			</tr>
-			<tr>
-				<th>Description</th>
-				<td>{{ calendar.description }}</td>
-			</tr>
-			<tr>
-				<th>All_day</th>
-				<td>{{ calendar.allDay ? 'Yes' : 'No' }}</td>
-			</tr>
-			<tr>
-				<th>Background_color</th>
-				<td>{{ calendar.backgroundColor }}</td>
-			</tr>
-			<tr>
-				<th>Border_color</th>
-				<td>{{ calendar.borderColor }}</td>
-			</tr>
-			<tr>
-				<th>Text_color</th>
-				<td>{{ calendar.textColor }}</td>
-			</tr>
-		</tbody>
-	</table>
+							<a href="{{ path('calendar_edit', {'id': calendar.id}) }}">edit</a>
 
-	<a href="{{ path('calendar_index') }}">back to list</a>
+							{{ include('calendar/_delete_form.html.twig') }}
+						</div>
 
-	<a href="{{ path('calendar_edit', {'id': calendar.id}) }}">edit</a>
+					</div>
+				</div>
 
-	{{ include('calendar/_delete_form.html.twig') }}
+			</div>
+		</main>
+	</div>
 {% endblock %}

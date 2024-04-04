@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Calendar;
+use App\Entity\Client;
+use App\Entity\Users;
 use App\Form\CalendarType;
 use App\Repository\CalendarRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -15,36 +17,74 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 #[Route("/calendar")]
 class CalendarController extends AbstractController
 {
-    /*#[Route('/calendar', name: 'app_calendar')]
-    public function index(): Response
-    {
-        return $this->render('calendar/index.html.twig', [
-            'controller_name' => 'CalendarController',
-        ]);
-    }*/
     #[Route("/", name: "calendar_index", methods: ["GET"])]
-    public function index(CalendarRepository $calendarRepository): Response
+    public function index(EntityManagerInterface $entityManager, Request $request): Response
     {
+        $page = $request->query->getInt('page', 1); // Get the current page from the URL, default to 1
+        $maxResults = 9; // The number of calendar per page
+
+        // Calculating the offset
+        $firstResult = ($page - 1) * $maxResults;
+
+        // Get the client repository and find the calendar with the offset and the limit
+        $calendar = $entityManager->getRepository(Calendar::class)
+            ->findBy([], null, $maxResults, $firstResult);
+
+        // Calculate the total number of pages
+        $totalCalendar = count($entityManager->getRepository(Calendar::class)->findAll());
+        $totalPages = ceil($totalCalendar / $maxResults);
+
+
         return $this->render('calendar/index.html.twig', [
-            'calendars' => $calendarRepository->findAll(),
+            'calendars' => $calendar,
+            'totalPages' => $totalPages,
+            'currentPage' => $page
         ]);
     }
 
-    #[Route("/new", name: "calendar_new", methods: ["GET", "POST"])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route("/new/{clientId}", name: "calendar_new", methods: ["GET", "POST"])]
+    public function new(Request $request, EntityManagerInterface $entityManager, $clientId = null): Response
     {
         $calendar = new Calendar();
-        $form = $this->createForm(CalendarType::class, $calendar);
+        // Récupérez le client et le conseiller en utilisant les paramètres passés
+        $client = $clientId ? $entityManager->getRepository(Client::class)->find($clientId) : null;
+
+        // Récupérez le conseiller associé au client (remplacez getParent par la méthode appropriée)
+        $conseiller = $client ? $client->getParent() : null;
+
+        if ($client && $conseiller) {
+            $calendar->setClients($client);
+            $calendar->setUsers($conseiller);
+        }
+
+        // Créez le formulaire avec les données du client et du conseiller
+        $form = $this->createForm(CalendarType::class, $calendar, [
+            'client_name' => $client ? $client->getFullName() : '',
+            'conseiller_name' => $conseiller ? $conseiller->getFullName() : '',
+        ]);
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $user = $this->getUser(); // Supposons que getUser() retourne l'entité de l'utilisateur connecté
-            if ($user) {
-                $calendar->setParent($user); // Utilisez la méthode appropriée pour ajouter l'utilisateur à l'événement
+            // Vérifiez s'il existe déjà un événement qui se chevauche
+            $start = $calendar->getStart();
+            $end = $calendar->getEnd();
+
+            $overlappingEvent = $entityManager->getRepository(Calendar::class)->findOneByOverlap($start, $end, $conseiller->getId());
+
+            if ($overlappingEvent) {
+                // Ajoutez un message d'erreur et retournez au formulaire
+                $this->addFlash('error', 'Il existe déjà un événement durant cette période.');
+                return $this->render('calendar/new.html.twig', [
+                    'calendar' => $calendar,
+                    'form' => $form->createView(),
+                ]);
             }
+
             $entityManager->persist($calendar);
             $entityManager->flush();
 
+            $this->addFlash('success', 'Le rendez-vous a été ajouté avec succès.');
             return $this->redirectToRoute('calendar_index');
         }
 
@@ -53,6 +93,7 @@ class CalendarController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+
     #[Route("/{id}", name: "calendar_show", methods: ["GET"])]
     public function show(int $id, EntityManagerInterface $entityManager): Response
     {
@@ -105,6 +146,38 @@ class CalendarController extends AbstractController
             $entityManager->flush();
         }
 
+        return $this->redirectToRoute('calendar_index');
+    }
+    #[Route("/accept/{id}", name: "calendar_accept")]
+    public function acceptAction(EntityManagerInterface $entityManager, $id): Response
+    {
+        $calendar = $entityManager->getRepository(Calendar::class)->find($id);
+
+        if (!$calendar) {
+            throw new NotFoundHttpException('Aucun événement trouvé pour cet id ' . $id);
+        }
+
+        // Ici, nous supposons que 'description' contient le motif.
+        // Vous devez ajuster ce code si le motif est stocké différemment.
+        $description = $calendar->getDescription();
+
+        if ($description === 'Ouverture compte') {
+            // Si le motif est l'ouverture d'un compte, personnalisez le message
+            $this->addFlash('success', 'L\'ouverture du compte a été acceptée avec succès.');
+        } else if ($description === 'Ouverture contrat') {
+            // Pour tout autre motif
+            $this->addFlash('success', 'L\'ouverture du contrat a été acceptée avec succès.');
+        }
+
+        // ... (ici la logique pour effectivement accepter l'événement)
+
+        return $this->redirectToRoute('app_conseiller');
+    }
+
+    #[Route("/calendar/reject/{id}", name: "calendar_reject")]
+    public function rejectAction(Request $request, $id)
+    {
+        $this->addFlash('error', 'La création  a été rejeté avec succès.');
         return $this->redirectToRoute('calendar_index');
     }
 }

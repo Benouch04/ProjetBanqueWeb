@@ -13,16 +13,33 @@ use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class RegistrationFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('username', TextType::class)
-            ->add('lastname', TextType::class)
-            ->add('firstname', TextType::class)
+            ->add('username', TextType::class, [
+                'label' => 'Login',
+                'constraints' => [
+                    new Assert\Length(['min' => 2, 'max' => 50])
+                ]
+            ])
+            ->add('lastname', TextType::class,[
+                'label' => 'Nom',
+                'constraints' => [
+                    new Assert\Length(['min' => 2, 'max' => 50])
+                ]
+            ])
+            ->add('firstname', TextType::class,[
+                'label' => 'Prénom',
+                'constraints' => [
+                    new Assert\Length(['min' => 2, 'max' => 50])
+                ]
+            ])
             ->add('ConsentementRGPD', CheckboxType::class, [
+                'label' => 'Consentement du RGPD',
                 'mapped' => false,
                 'constraints' => [
                     new IsTrue([
@@ -46,6 +63,7 @@ class RegistrationFormType extends AbstractType
                 // instead of being set onto the object directly,
                 // this is read and encoded in the controller
                 'mapped' => false,
+                'label' => 'Mot de passe',
                 'attr' => ['autocomplete' => 'new-password'],
                 'constraints' => [
                     new NotBlank([

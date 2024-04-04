@@ -1,55 +1,61 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Modification d'un contrat
+{% block title %}Modification d'un client
 {% endblock %}
 
 {% block body %}
-	<body class="bg-primary">
-		<div id="layoutAuthentication">
-			<div id="layoutAuthentication_content">
-				<main>
-					<div class="container">
-						<div class="row justify-content-center">
-							<div class="col-lg-5">
-								<div class="card shadow-lg border-0 rounded-lg mt-5">
-									<div class="card-header">
-										<h3 class="text-center font-weight-light my-4">Formulaire de Modification du Client</h3>
-									</div>
-									<div class="card-body">
-										<form
-											method="post">
-											{{ form_start(form) }}
-											{{ form_row(form.nomClient) }}	
-											{{ form_row(form.prenomClient) }}
-											{{ form_row(form.adresseClient) }}
-											{{ form_row(form.numTel) }}	
-											{{ form_row(form.situation) }}					
-											{{ form_row(form.submit) }}
-											{{ form_end(form) }}
-										</form>
-									</div>
-								</div>
+	<div id="layoutSidenav_content" class="justify-content-center bg-light">
+		<main>
+			{% for message in app.flashes('danger') %}
+				<div class="alert alert-danger" role="alert">
+					{{ message }}
+				</div>
+			{% endfor %}
+			<div class="container-fluid px-4">
+				<div class="row justify-content-center">
+					<div class="col-xl-10">
+						<div class="card mb-4">
+							<div class="card-header bg-primary">
+								<h3 class="text-center text-white font-weight-light my-4">Formulaire de Modification du Client</h3>
+							</div>
+							<div class="card-body">
+								<form method="post">
+								{{ form_start(form) }}
+									{{ form_row(form.nomClient) }}
+									{{ form_row(form.prenomClient) }}
+									{{ form_row(form.adresseClient) }}
+									<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+									<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+									{{ form_row(form.numTel) }}
+									{{ form_row(form.situation) }}
+									<hr style="margin-top: 20px; margin-bottom: 20px;">
+									{{ form_row(form.parent) }}
+									{{ form_row(form.submit) }}
+									{{ form_end(form) }}
+								</form>
 							</div>
 						</div>
 					</div>
-				</main>
+				</div>
+
 			</div>
-			<div id="layoutAuthentication_footer">
-				<footer class="py-4 bg-light mt-auto">
-					<div class="container-fluid px-4">
-						<div class="d-flex align-items-center justify-content-between small">
-							<div class="text-muted">Copyright &copy; Your Website 2023</div>
-							<div>
-								<a href="#">Privacy Policy</a>
-								&middot;
-								<a href="#">Terms &amp; Conditions</a>
-							</div>
-						</div>
-					</div>
-				</footer>
+		</main>
+	</div>
+{% endblock %}
+
+
+{% block footer %}
+	<div class="py-4 bg-light mt-auto">
+		<div class="container-fluid px-4">
+			<div class="d-flex align-items-center justify-content-between small">
+				<div class="text-muted">Copyright &copy; Your Website 2023</div>
+				<div>
+					<a href="#">Privacy Policy</a>
+					&middot;
+					<a href="#">Terms &amp; Conditions</a>
+				</div>
 			</div>
 		</div>
-		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-		<script src="js/scripts.js"></script>
-	</body>
-</html>{% endblock %}
+	</div>
+{% endblock %}
+

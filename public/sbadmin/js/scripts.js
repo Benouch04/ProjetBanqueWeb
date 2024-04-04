@@ -25,4 +25,43 @@ window.addEventListener('DOMContentLoaded', event => {
     }
 
 });
+/**
+ * Script de l'affichage numTel
+ */
+window.addEventListener('load', function() {
+    var input = document.querySelector(".intl-tel-input");
+    if (input) {
+      intlTelInput(input, {
+        // options personnalisées
+        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        preferredCountries: ['fr', 'us', 'gb'],
+        separateDialCode: true,
+        customContainer: "form-control",
+      });
+    }
+  });
 
+
+  
+  document.addEventListener('DOMContentLoaded', function () {
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        locale: 'fr',
+        timeZone: 'Europe/Paris',
+        headerToolbar: {
+            start: 'prev,next today',
+            center: 'title',
+            end: 'dayGridMonth,timeGridWeek'
+        },
+        events: eventData, 
+        editable: true,
+        eventResizableFromStart: true,
+        eventClick: function (info) {
+            window.location.href = `/calendar/${info.event.id}`;
+        }
+    });
+    
+    calendar.render();
+});
+  

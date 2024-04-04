@@ -21,7 +21,20 @@ class CalendarRepository extends ServiceEntityRepository
         parent::__construct($registry, Calendar::class);
     }
 
-//    /**
+    public function findOneByOverlap(\DateTimeInterface $start, \DateTimeInterface $end, $userId)
+    {
+        $qb = $this->createQueryBuilder('c');
+
+        return $qb
+            ->where('c.users = :userId')
+            ->andWhere('c.start < :end AND c.end > :start')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->setParameter('userId', $userId)
+            ->getQuery()
+            ->getResult();
+    }
+    //    /**
 //     * @return Calendar[] Returns an array of Calendar objects
 //     */
 //    public function findByExampleField($value): array
@@ -36,7 +49,7 @@ class CalendarRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Calendar
+    //    public function findOneBySomeField($value): ?Calendar
 //    {
 //        return $this->createQueryBuilder('c')
 //            ->andWhere('c.exampleField = :val')

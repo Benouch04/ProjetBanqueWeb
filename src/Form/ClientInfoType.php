@@ -4,19 +4,17 @@ namespace App\Form;
 
 use App\Entity\Client;
 use App\Entity\Users;
-use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
-class ClientType extends AbstractType
+class ClientInfoType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -57,22 +55,24 @@ class ClientType extends AbstractType
                     new Assert\Length(['min' => 2, 'max' => 50])
                 ]
             ])
-            ->add('numTel', NumberType::class, [
+            ->add('numTel', TextType::class, [
                 'attr' => [
-                    'class' => 'intl-tel-input',
+                    'class' => 'form-control mb-3',
                     'placeholder' => 'Téléphone',
-                    'style' => 'border: none;' // Ajout de cette ligne pour supprimer les bordures
+                    'minlength' => '2',
+                    'maxlength' => '50',
                 ],
                 'label' => false,
+                'constraints' => [
+                    new Assert\Length(['min' => 2, 'max' => 50])
+                ]
             ])
-
             ->add('situation', ChoiceType::class, [
                 'attr' => [
-                    'class' => 'form-select mt-3',
+                    'class' => 'form-control mb-3 custom-select-lg',
                     'placeholder' => 'Situation',
                     'minlenght' => '2',
                     'maxlenght' => '50',
-
                 ],
                 'choices' => [
                     'Célibataire' => 'Célibataire',
@@ -85,26 +85,20 @@ class ClientType extends AbstractType
                 'label' => false,
             ])
             ->add('parent', EntityType::class, [
-                'attr' => [
-                    'class' => 'form-select mb-3',
-                    'placeholder' => 'Choix du conseiller :',
-                ],
-                'label' => 'Attribution d\'un Conseiller',
                 'class' => Users::class,
-                'choice_label' => 'lastname',
-                'query_builder' => function (EntityRepository $er) {
-                    return $er->createQueryBuilder('e')
-                        ->where('e.type = :type')
-                        ->setParameter('type', 'conseiller');
-                },
-
-            ])
-            ->add('submit', SubmitType::class, [
+                'choice_label' => 'lastname', // ou toute autre propriété que vous voulez afficher
+                'disabled' => true,
                 'attr' => [
-                    'class' => 'btn btn-primary btn-lg mx-auto d-block mt-4', // btn-lg pour agrandir, mx-auto et d-block pour centrer
+                    'class' => 'form-control mb-3',
                 ],
-                'label' => 'Sauvegarder'
-            ]);
+                'label' => false,
+            ])
+            ->add('planning', SubmitType::class, [
+                'label' => 'Planning', // Le texte du bouton est défini ici
+                'attr' => [
+                    'class' => 'btn btn-primary btn-lg mx-auto d-block mt-4', // Classes pour le style
+                ]
+            ])
         ;
     }
 
