@@ -84,9 +84,9 @@ class CalendarType extends AbstractType
                 'attr' => ['class' => 'form-control'],
                 'required' => true,
                 'choices' => [
-                    'Ouverture d\'un compte' => 'compte',
-                    'Ouverture d\'un contrat' => 'contrat',
-                    'Autre' => 'autre',
+                    'Ouverture d\'un compte' => 'Ouverture d\'un compte',
+                    'Ouverture d\'un contrat' => 'Ouverture d\'un contrat',
+                    'Autre' => 'Autre',
                 ],
                 'label' => 'Motif :',
                 'placeholder' => 'Choix du motif',
@@ -107,18 +107,6 @@ class CalendarType extends AbstractType
                 'label' => 'Couleur de fond :',
                 'label_attr' => ['class' => 'form-label mt-2 mb-3'],
                 // Vous pouvez envisager d'ajouter des contraintes pour le format de la couleur si nécessaire
-            ])
-            ->add('border_color', ColorType::class, [
-                'required' => false,
-                'label' => 'Couleur de la bordure :',
-                'label_attr' => ['class' => 'form-label mt-2'],
-                // Des contraintes similaires pour la couleur pourraient être appliquées ici
-            ])
-            ->add('text_color', ColorType::class, [
-                'required' => false,
-                'label' => 'Couleur du texte :',
-                'label_attr' => ['class' => 'form-label mt-2'],
-                // Et également ici pour la validation de la couleur du texte
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Ajouter',

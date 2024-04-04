@@ -50,8 +50,6 @@ class MainController extends AbstractController
                 'title' => $event->getTitle(),
                 'description' => $event->getDescription(),
                 'backgroundColor' => $event->getBackgroundColor(),
-                'borderColor' => $event->getBorderColor(),
-                'textColor' => $event->getTextColor(),
                 'allDay' => $event->isAllDay(),
             ];
         }
@@ -98,8 +96,6 @@ class MainController extends AbstractController
                 'title' => $event->getTitle(),
                 'description' => $event->getDescription(),
                 'backgroundColor' => $event->getBackgroundColor(),
-                'borderColor' => $event->getBorderColor(),
-                'textColor' => $event->getTextColor(),
                 'allDay' => $event->isAllDay(),
             ];
         }
@@ -164,8 +160,6 @@ class MainController extends AbstractController
                 'title' => $event->getTitle(),
                 'description' => $event->getDescription(),
                 'backgroundColor' => $event->getBackgroundColor(),
-                'borderColor' => $event->getBorderColor(),
-                'textColor' => $event->getTextColor(),
                 'allDay' => $event->isAllDay(),
             ];
         }
@@ -206,8 +200,6 @@ class MainController extends AbstractController
                 'title' => $event->getTitle(),
                 'description' => $event->getDescription(),
                 'backgroundColor' => $event->getBackgroundColor(),
-                'borderColor' => $event->getBorderColor(),
-                'textColor' => $event->getTextColor(),
                 'allDay' => $event->isAllDay(),
             ];
         }
