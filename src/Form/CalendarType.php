@@ -86,7 +86,10 @@ class CalendarType extends AbstractType
             ->add('description', ChoiceType::class, [
                 'attr' => ['class' => 'form-control'],
                 'required' => true,
-                'choices' => array_combine(array_merge($nomContrats, $nomComptes), array_merge($nomContrats, $nomComptes)),
+                'choices' => array_combine(
+                    array_merge($nomContrats, $nomComptes, ['Autre']), 
+                    array_merge($nomContrats, $nomComptes, ['Autre'])  
+                ),
                 'label' => 'Motif :',
                 'placeholder' => 'Choix du motif',
                 'label_attr' => ['class' => 'form-label mt-2'],
