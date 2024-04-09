@@ -6,7 +6,11 @@ use App\Entity\Calendar;
 use App\Entity\Client;
 use App\Entity\Compte;
 use App\Entity\Contrat;
-use App\Entity\Users;
+use App\Entity\Motif;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Doctrine\ORM\EntityRepository;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use App\Form\CalendarType;
 use App\Repository\CalendarRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -73,6 +77,27 @@ class CalendarController extends AbstractController
 
         ]);
 
+        //Affiche la valeur Autre dans la liste déoulante des motifs
+        $motifRepository = $entityManager->getRepository(Motif::class);
+        $autreMotif = $motifRepository->findOneBy(['libelleMotif' => 'Autre']);
+
+        if (!$autreMotif) {
+            $autreMotif = new Motif();
+            $autreMotif->setLibelleMotif('Autre');
+            $entityManager->persist($autreMotif);
+            $entityManager->flush();
+        }
+        $form->add('motif', EntityType::class, [
+            'class' => Motif::class,
+            'choices' => $entityManager->getRepository(Motif::class)->findAllIncludingAutre(),
+            'choice_label' => 'libelleMotif',
+            'label' => 'Motif :',
+            'attr' => ['class' => 'form-select'],
+            'label_attr' => ['class' => 'form-label mt-2'],
+            'placeholder' => 'Sélectionnez un motif',
+            'required' => true,
+        ]);
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -95,7 +120,7 @@ class CalendarController extends AbstractController
             $entityManager->flush();
 
             $this->addFlash('success', 'Le rendez-vous a été ajouté avec succès.');
-            return $this->redirectToRoute('calendar_index');
+            return $this->redirectToRoute('calendar_show', ['id' => $calendar->getId()]);
         }
 
         return $this->render('calendar/new.html.twig', [
@@ -113,8 +138,16 @@ class CalendarController extends AbstractController
             throw new NotFoundHttpException('No calendar found for id ' . $id);
         }
 
+        $motif = $calendar->getMotif();
+        if ($motif) {
+            $piecesJustifs = $motif->getMotifPj();
+        } else {
+            $piecesJustifs = []; // ou bien une ArrayCollection si vous préférez
+        }
+
         return $this->render('calendar/show.html.twig', [
             'calendar' => $calendar,
+            'piecesJustifs' => $piecesJustifs,
         ]);
     }
 
@@ -169,7 +202,7 @@ class CalendarController extends AbstractController
 
         // Ici, nous supposons que 'description' contient le motif.
         // Vous devez ajuster ce code si le motif est stocké différemment.
-        $description = $calendar->getDescription();
+        $description = $calendar->getMotif();
 
         if ($description === 'Ouverture compte') {
             // Si le motif est l'ouverture d'un compte, personnalisez le message

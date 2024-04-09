@@ -23,9 +23,6 @@ class Calendar
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $end = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $description = null;
-
     #[ORM\Column]
     private ?bool $all_day = null;
 
@@ -78,18 +75,6 @@ class Calendar
     public function setEnd(\DateTimeInterface $end): static
     {
         $this->end = $end;
-
-        return $this;
-    }
-
-    public function getDescription(): ?string
-    {
-        return $this->description;
-    }
-
-    public function setDescription(string $description): static
-    {
-        $this->description = $description;
 
         return $this;
     }

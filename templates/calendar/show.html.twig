@@ -25,7 +25,7 @@
 							</div>
 							<table class="table">
 								<tbody>
-									
+
 									<tr>
 										<th>Titre</th>
 										<td>{{ calendar.title }}</td>
@@ -48,7 +48,19 @@
 									</tr>
 									<tr>
 										<th>Motif</th>
-										<td>{{ calendar.description }}</td>
+										<td>{{ calendar.motif.libelleMotif }}</td>
+									</tr>
+									<tr>
+										<th>Liste pièces justificatives</th>
+										<td>
+											<ul>
+												{% for pieceJustif in piecesJustifs %}
+													<li>{{ pieceJustif.getNomPieceJustif() }}</li>
+												{% else %}
+													<li>Aucune pièce justificative associée.</li>
+												{% endfor %}
+											</ul>
+										</td>
 									</tr>
 									<tr>
 										<th>Toute la journée</th>

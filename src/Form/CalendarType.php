@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\Calendar;
 use App\Entity\Users;
 use App\Entity\Client;
+use App\Entity\Motif;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ColorType;
@@ -21,24 +22,9 @@ class CalendarType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $nomContrats = $options['nomContrat'];
-        $nomComptes = $options['nomCompte'];
+
 
         $builder
-            /*->add('clients', EntityType::class, [
-                'class' => Client::class,
-                'choice_label' => function ($client) {
-                    return $client->getNomClient(); // Assurez-vous que cette méthode renvoie la représentation en chaîne du client
-                },
-                'label' => 'Client :',
-            ])
-            ->add('users', EntityType::class, [
-                'class' => Users::class, // Ou Conseiller::class
-                'choice_label' => function ($user) {
-                    return $user->getLastname(); // Assurez-vous que cette méthode renvoie la représentation en chaîne du conseiller
-                },
-                'label' => 'Conseiller :',
-            ])*/
             ->add('clientName', TextType::class, [
                 'mapped' => false,
                 'data' => $options['client_name'],
@@ -82,8 +68,16 @@ class CalendarType extends AbstractType
                 'label_attr' => ['class' => 'form-label mt-2'],
                 // Identique au champ 'start'
             ])
-
-            ->add('description', ChoiceType::class, [
+            /*->add('motif', EntityType::class, [
+                'class' => Motif::class,
+                'choice_label' => 'libelleMotif',
+                'label' => 'Motif :',
+                'attr' => ['class' => 'form-select'],
+                'label_attr' => ['class' => 'form-label mt-2'],
+                'placeholder' => 'Sélectionnez un motif',
+                'required' => true,
+            ])*/
+            /*->add('description', ChoiceType::class, [
                 'attr' => ['class' => 'form-control'],
                 'required' => true,
                 'choices' => array_combine(
@@ -97,7 +91,7 @@ class CalendarType extends AbstractType
                     new Assert\NotBlank(),
                     new Assert\Length(['min' => 2, 'max' => 50])
                 ]
-            ])
+            ])*/
             ->add('all_day', CheckboxType::class, [
                 'required' => false,
                 'label' => 'Toute la journée :',

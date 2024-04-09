@@ -34,7 +34,6 @@ class Motif
     {
         return $this->id;
     }
-
     public function getLibelleMotif(): ?string
     {
         return $this->libelleMotif;

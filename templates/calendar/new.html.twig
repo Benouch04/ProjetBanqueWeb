@@ -22,7 +22,16 @@
 
 							<div class="card-body">
 
-								{{ include('calendar/_form.html.twig') }}
+								{{ form_start(form) }}
+								{{ form_row(form.clientName) }}
+								{{ form_row(form.conseillerName) }}
+								<hr style="margin-top: 20px; margin-bottom: 1px;">
+								{{ form_row(form.title) }}
+								{{ form_row(form.motif) }}
+								{{ form_row(form.start) }}
+								{{ form_row(form.end) }}
+
+								{{ form_end(form) }}
 
 								<a href="{{ path('calendar_index') }}">back to list</a>
 							</div>
