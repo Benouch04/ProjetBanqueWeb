@@ -32,4 +32,8 @@ class Contrat
 
         return $this;
     }
+    public function __toString()
+    {
+        return $this->nomContrat; // ou tout autre propriété qui doit être convertie en chaîne
+    }
 }

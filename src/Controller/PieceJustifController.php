@@ -1,7 +1,9 @@
 <?php
 
 namespace App\Controller;
+
 use App\Entity\Contrat;
+use App\Entity\Motif;
 use App\Entity\PieceJustif;
 use App\Entity\Users;
 use App\Entity\Calendar;
@@ -83,4 +85,30 @@ class PieceJustifController extends AbstractController
     {
         return $this->redirectToRoute('app_directeur');
     }
+    #[Route("/choix-pj/{id}", name: "choixPJ")]
+    public function choixPJ(Request $request, EntityManagerInterface $entityManager, int $id): Response
+    {
+        //$piece = $entityManager->getRepository(PieceJustif::class)->find($id);
+        $piece = $entityManager->getRepository(PieceJustif::class)->findAll();
+        $motif = $entityManager->getRepository(Motif::class)->find($id);
+        
+
+        return $this->render('piece_justif/choixPJ.html.twig', [
+            'id' => $id,
+            'pieces' => $piece,
+            'motif' => $motif
+
+        ]);
+    }
+    /*#[Route('/traitement-choix-pj/{id}', name: 'traitement_choix_pj')]
+    public function traitementChoixPJ(Request $request, $id): Response
+    {
+        // Récupérez les données soumises avec $request->request->get('pieces')
+        $selectedPieces = $request->request->get('pieces');
+
+        // Traitez les données sélectionnées ici...
+
+        // Ensuite, redirigez ou affichez une confirmation comme nécessaire
+        return $this->redirectToRoute('une_autre_route');
+    }*/
 }

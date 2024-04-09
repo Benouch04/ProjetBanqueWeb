@@ -38,6 +38,9 @@ class Calendar
     #[ORM\ManyToOne(inversedBy: 'calendars')]
     private ?Client $clients = null;
 
+    #[ORM\ManyToOne(inversedBy: 'calendars')]
+    private ?Motif $Motif = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -135,6 +138,17 @@ class Calendar
     public function setClients(?Client $clients): static
     {
         $this->clients = $clients;
+
+        return $this;
+    }
+    public function getMotif(): ?Motif
+    {
+        return $this->Motif;
+    }
+
+    public function setMotif(?Motif $Motif): static
+    {
+        $this->Motif = $Motif;
 
         return $this;
     }

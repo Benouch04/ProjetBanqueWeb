@@ -46,6 +46,10 @@ class Compte
 
         return $this;
     }
+    public function __toString()
+    {
+        return $this->NomCompte; // ou tout autre propriété qui doit être convertie en chaîne
+    }
 
     /**
      * @return Collection<int, Operation>

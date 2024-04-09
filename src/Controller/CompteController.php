@@ -8,6 +8,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Compte;
+use App\Entity\Motif;
+use App\Entity\Users;
 use App\Entity\CompteClient;
 use App\Form\CompteType;
 use App\Form\CompteClientType;
@@ -31,13 +33,19 @@ class CompteController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($compte);
-            $entityManager->flush();
+            // Créez et configurez l'entité Motif avec le nomCompte.
+            $motif = new Motif();
+            $motif->setLibelleMotif($compte->getNomCompte());
+            // Vous pouvez également ajouter d'autres propriétés nécessaires à l'entité Motif ici.
 
+            // Persistez l'entité Motif.
+            $entityManager->persist($motif);
+            $entityManager->flush();
             // Redirection ou affichage d'un message de succès
-            return $this->redirectToRoute('main');
+            return $this->redirectToRoute('app_directeur');
         }
 
-        return $this->render('main/directeur.html.twig', [
+        return $this->render('compte/index.html.twig', [
             'form' => $form->createView(),
             'nomCompte' => $compte->getNomCompte(),
             'data_class' => Compte::class
@@ -74,7 +82,7 @@ class CompteController extends AbstractController
         if (!$compte) {
             // Handle the case where the compte does not exist
             $this->addFlash('error', 'Compte non trouvé');
-            return $this->redirectToRoute('compte_list');
+            return $this->redirectToRoute('app_directeur');
         }
 
         $entityManager->remove($compte);
@@ -83,7 +91,7 @@ class CompteController extends AbstractController
         // Add a flash message or some kind of notification to let the compte know it was successful
         $this->addFlash('success', 'Compte supprimé avec succès');
 
-        return $this->redirectToRoute('compte_list');
+        return $this->redirectToRoute('app_directeur');
     }
     #[Route('/compte/list', name: 'compte_list')]
     public function listCompte(EntityManagerInterface $entityManager): Response

@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Entity\Calendar;
 use App\Entity\Client;
+use App\Entity\Compte;
+use App\Entity\Contrat;
 use App\Entity\Users;
 use App\Form\CalendarType;
 use App\Repository\CalendarRepository;
@@ -46,6 +48,11 @@ class CalendarController extends AbstractController
     public function new(Request $request, EntityManagerInterface $entityManager, $clientId = null): Response
     {
         $calendar = new Calendar();
+
+        // Récupérez les noms de contrats et de comptes ici. Exemple fictif :
+        $nomContrats = $entityManager->getRepository(Contrat::class)->findAll();
+        $nomComptes = $entityManager->getRepository(Compte::class)->findAll();
+
         // Récupérez le client et le conseiller en utilisant les paramètres passés
         $client = $clientId ? $entityManager->getRepository(Client::class)->find($clientId) : null;
 
@@ -61,6 +68,9 @@ class CalendarController extends AbstractController
         $form = $this->createForm(CalendarType::class, $calendar, [
             'client_name' => $client ? $client->getFullName() : '',
             'conseiller_name' => $conseiller ? $conseiller->getFullName() : '',
+            'nomContrat' => $nomContrats, // Assurez-vous que ce nom correspond à celui attendu dans le formulaire
+            'nomCompte' => $nomComptes, // Assurez-vous que ce nom correspond à celui attendu dans le formulaire
+
         ]);
 
         $form->handleRequest($request);

@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Contrat;
 use App\Entity\Users;
+use App\Entity\Motif;
 use App\Form\ContratType;
 use App\Repository\ContratRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -24,10 +25,14 @@ class ContratController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($contrat);
+            $motif = new Motif();
+            $motif->setLibelleMotif($contrat->getNomContrat());
+
+            $entityManager->persist($motif);
             $entityManager->flush();
 
             // Redirection ou affichage d'un message de succès
-            return $this->redirectToRoute('main');
+            return $this->redirectToRoute('app_directeur');
         }
 
         return $this->render('contrat/index.html.twig', [
@@ -50,7 +55,7 @@ class ContratController extends AbstractController
 
             $this->addFlash('success', 'Les informations du nom de contrat ont été modifiées avec succès.');
 
-            return $this->redirectToRoute('contrat_list');
+            return $this->redirectToRoute('app_directeur');
         }
 
         return $this->render('contrat/edit.html.twig', [
@@ -66,7 +71,7 @@ class ContratController extends AbstractController
         if (!$contrat) {
             // Handle the case where the contrat does not exist
             $this->addFlash('error', 'Contrat non trouvé');
-            return $this->redirectToRoute('contrat_list');
+            return $this->redirectToRoute('app_directeur');
         }
 
         $entityManager->remove($contrat);
@@ -75,7 +80,7 @@ class ContratController extends AbstractController
         // Add a flash message or some kind of notification to let the contrat know it was successful
         $this->addFlash('success', 'Contrat supprimé avec succès');
 
-        return $this->redirectToRoute('contrat_list');
+        return $this->redirectToRoute('app_directeur');
     }
     #[Route('/contrat/list', name: 'contrat_list')]
     public function listContrats(EntityManagerInterface $entityManager): Response

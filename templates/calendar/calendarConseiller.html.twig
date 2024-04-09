@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Modification d'un contrat
+{% block title %}Planning
 {% endblock %}
 
 {% block body %}
@@ -29,29 +29,33 @@
 	</div>
 	{% block script %}
 		<script>
-			document.addEventListener('DOMContentLoaded', function () {
-var calendarEl = document.getElementById('calendar');
-var calendar = new FullCalendar.Calendar(calendarEl, {
-initialView: 'dayGridMonth',
-locale: 'fr',
-timeZone: 'Europe/Paris',
-headerToolbar: {
-start: 'prev,next today',
-center: 'title',
-end: 'dayGridMonth,timeGridWeek'
-},
-events: {{ data | raw }}, // Ajout de | raw pour éviter l'échappement HTML
-editable: true,
-eventResizableFromStart: true,
-eventClick: function (info) { // Redirection vers la route 'calendar' avec l'ID de l'événement
-window.location.href = `/calendar/${
-info.event.id
-}`;
-}
+			document.addEventListener('DOMContentLoaded', function() {
+  var calendarEl = document.getElementById('calendar');
+  var calendar = new FullCalendar.Calendar(calendarEl, {
+    initialView: 'dayGridMonth',
+    locale: 'fr',
+    timeZone: 'Europe/Paris',
+    headerToolbar: {
+      start: 'prev,next today',
+      center: 'title',
+      end: 'dayGridMonth,timeGridWeek'
+    },
+    events: (function() {
+      var events = {{ data | raw }}; 
+      return events.map(function(event) {
+        return { ...event, textColor: 'black' }; 
+      });
+    })(),
+    editable: true,
+    eventResizableFromStart: true,
+    eventClick: function(info) {
+      window.location.href = `/calendar/${info.event.id}`;
+    }
+  });
+
+  calendar.render();
 });
 
-calendar.render();
-});
 		</script>
 	{% endblock %}
 </html>{% endblock %}

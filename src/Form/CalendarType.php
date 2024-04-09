@@ -21,6 +21,9 @@ class CalendarType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $nomContrats = $options['nomContrat'];
+        $nomComptes = $options['nomCompte'];
+
         $builder
             /*->add('clients', EntityType::class, [
                 'class' => Client::class,
@@ -83,11 +86,7 @@ class CalendarType extends AbstractType
             ->add('description', ChoiceType::class, [
                 'attr' => ['class' => 'form-control'],
                 'required' => true,
-                'choices' => [
-                    'Ouverture d\'un compte' => 'Ouverture d\'un compte',
-                    'Ouverture d\'un contrat' => 'Ouverture d\'un contrat',
-                    'Autre' => 'Autre',
-                ],
+                'choices' => array_combine(array_merge($nomContrats, $nomComptes), array_merge($nomContrats, $nomComptes)),
                 'label' => 'Motif :',
                 'placeholder' => 'Choix du motif',
                 'label_attr' => ['class' => 'form-label mt-2'],
@@ -123,6 +122,8 @@ class CalendarType extends AbstractType
             'data_class' => Calendar::class,
             'client_name' => '', // Ajoutez une valeur par défaut pour éviter les erreurs
             'conseiller_name' => '',
+            'nomContrat' => null, // assurez-vous que les noms correspondent exactement
+            'nomCompte' => null, // assurez-vous que les noms correspondent exactement
         ]);
     }
 }

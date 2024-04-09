@@ -6,263 +6,278 @@
 
 {% block body %}
 
-<div id="layoutSidenav_content">
-	<main>
-		<div class="container-fluid px-4">
-			<h1 class="mt-4">Dashboard du Directeur</h1>
-			<ol class="breadcrumb mb-4">
-				<li class="breadcrumb-item active">Dashboard</li>
-			</ol>
-			<div class="row">
-				<div class="col-xl-3 col-md-6">
-					<div class="card bg-primary text-white mb-4">
-						<div class="card-body">Statistique 1</div>
-						<div class="card-footer d-flex align-items-center justify-content-between">
-							<a class="small text-white stretched-link" href="#">Voir les détails</a>
-							<div class="small text-white">
-								<i class="fas fa-angle-right"></i>
+	<div id="layoutSidenav_content">
+		<main>
+			{% for message in app.flashes('danger') %}
+				<div class="alert alert-danger" role="alert">
+					{{ message }}
+				</div>
+			{% endfor %}
+			{% for message in app.flashes('error') %}
+				<div class="alert alert-danger" role="alert">
+					{{ message }}
+				</div>
+			{% endfor %}
+			{% for message in app.flashes('success') %}
+				<div class="alert alert-success" role="alert">
+					{{ message }}
+				</div>
+			{% endfor %}
+			<div class="container-fluid px-4">
+				<h1 class="mt-4">Dashboard du Directeur</h1>
+				<ol class="breadcrumb mb-4">
+					<li class="breadcrumb-item active">Dashboard</li>
+				</ol>
+				<div class="row">
+					<div class="col-xl-3 col-md-6">
+						<div class="card bg-primary text-white mb-4">
+							<div class="card-body">Statistique 1</div>
+							<div class="card-footer d-flex align-items-center justify-content-between">
+								<a class="small text-white stretched-link" href="#">Voir les détails</a>
+								<div class="small text-white">
+									<i class="fas fa-angle-right"></i>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-xl-3 col-md-6">
+						<div class="card bg-primary text-white mb-4">
+							<div class="card-body">Statistique 2</div>
+							<div class="card-footer d-flex align-items-center justify-content-between">
+								<a class="small text-white stretched-link" href="#">Voir les détails</a>
+								<div class="small text-white">
+									<i class="fas fa-angle-right"></i>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-xl-3 col-md-6">
+						<div class="card bg-primary text-white mb-4">
+							<div class="card-body">Statistique 3</div>
+							<div class="card-footer d-flex align-items-center justify-content-between">
+								<a class="small text-white stretched-link" href="#">Voir les détails</a>
+								<div class="small text-white">
+									<i class="fas fa-angle-right"></i>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-xl-3 col-md-6">
+						<div class="card bg-primary text-white mb-4">
+							<div class="card-body">Statistique 4</div>
+							<div class="card-footer d-flex align-items-center justify-content-between">
+								<a class="small text-white stretched-link" href="#">Voir les détails</a>
+								<div class="small text-white">
+									<i class="fas fa-angle-right"></i>
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-				<div class="col-xl-3 col-md-6">
-					<div class="card bg-primary text-white mb-4">
-						<div class="card-body">Statistique 2</div>
-						<div class="card-footer d-flex align-items-center justify-content-between">
-							<a class="small text-white stretched-link" href="#">Voir les détails</a>
-							<div class="small text-white">
-								<i class="fas fa-angle-right"></i>
+				<div class="row">
+					<div class="col-xl-6">
+						<div class="card mb-4">
+							<div class="card-header">
+								<div class="d-flex justify-content-between align-items-center">
+									<div>
+										<i class="fa-solid fa-solid fa-user me-1"></i>
+										Employés
+									</div>
+									<form action="{{ path('user_ajout') }}" method="post">
+										<button type="submit" class="btn btn-success">Créer</button>
+									</form>
+								</div>
 							</div>
+
+							<table class="table">
+								<thead>
+									<tr class="text-center">
+										<th>ID</th>
+										<th>Login</th>
+										<th>Poste</th>
+										<th></th>
+										<th>Actions</th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for user in users %}
+										<tr class="text-center">
+											<td>{{ user.id }}</td>
+											<td>{{ user.username }}</td>
+											<td>{{ user.type }}</td>
+											<td></td>
+											<td>
+												<form action="{{ path('user_edit', {'id': user.id}) }}" method="post" style="display: inline;">
+													<button type="submit" class="btn btn-warning">Modifier</button>
+												</form>
+												|
+												<form action="{{ path('user_delete', {'id': user.id}) }}" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?');" style="display: inline;">
+													<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
+													<button type="submit" class="btn btn-danger">Supprimer</button>
+												</form>
+											</td>
+										</tr>
+									{% else %}
+										<tr>
+											<td colspan="4">Aucun utilisateur trouvé.</td>
+										</tr>
+									{% endfor %}
+								</tbody>
+							</table>
 						</div>
 					</div>
-				</div>
-				<div class="col-xl-3 col-md-6">
-					<div class="card bg-primary text-white mb-4">
-						<div class="card-body">Statistique 3</div>
-						<div class="card-footer d-flex align-items-center justify-content-between">
-							<a class="small text-white stretched-link" href="#">Voir les détails</a>
-							<div class="small text-white">
-								<i class="fas fa-angle-right"></i>
+					<div class="col-xl-6">
+						<div class="card mb-4">
+							<div class="card-header">
+								<div class="d-flex justify-content-between align-items-center">
+									<div>
+										<i class="fa-solid fa-solid fa-user me-1"></i>
+										Liste des pièces justificatifs
+									</div>
+									<form action="{{ path('motif_list') }}" method="post" style="display: inline;">
+										<button type="submit" class="btn btn-info">Gérer par Compte/Contrat</button>
+									</form>
+									<form action="{{ path('ajout_piece') }}" method="post">
+										<button type="submit" class="btn btn-success">Créer</button>
+									</form>
+								</div>
 							</div>
+
+							<table class="table">
+								<thead>
+									<tr class="text-center">
+										<th>ID</th>
+										<th>Pièce justificatif</th>
+										<th></th>
+										<th>Actions</th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for piece in pieces %}
+										<tr class="text-center">
+											<td>{{ piece.id }}</td>
+											<td>{{ piece.nomPieceJustif }}</td>
+											<td></td>
+											<td>
+												<form action="{{ path('piece_edit', {'id': piece.id}) }}" method="post" style="display: inline;">
+													<button type="submit" class="btn btn-warning">Modifier</button>
+												</form>
+												|
+												<form action="{{ path('piece_delete', {'id': piece.id}) }}" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette pièce ?');" style="display: inline;">
+													<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ piece.id) }}">
+													<button type="submit" class="btn btn-danger">Supprimer</button>
+												</form>
+											</td>
+										</tr>
+									{% else %}
+										<tr>
+											<td colspan="4">Aucune pièce justificatif.</td>
+										</tr>
+									{% endfor %}
+								</tbody>
+							</table>
 						</div>
 					</div>
-				</div>
-				<div class="col-xl-3 col-md-6">
-					<div class="card bg-primary text-white mb-4">
-						<div class="card-body">Statistique 4</div>
-						<div class="card-footer d-flex align-items-center justify-content-between">
-							<a class="small text-white stretched-link" href="#">Voir les détails</a>
-							<div class="small text-white">
-								<i class="fas fa-angle-right"></i>
+					<div class="col-xl-6">
+						<div class="card mb-4">
+							<div class="card-header">
+								<div class="d-flex justify-content-between align-items-center">
+									<div>
+										<i class="fa-solid fa-file-contract me-1"></i>
+										Contrats
+									</div>
+									<form action="{{ path('ajout_contrat') }}" method="post">
+										<button type="submit" class="btn btn-success">Créer</button>
+									</form>
+								</div>
+
 							</div>
+							<table class="table">
+								<thead>
+									<tr class="text-center">
+										<th>ID</th>
+										<th>Nom du Contrat</th>
+										<th></th>
+										<th>Actions</th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for contrat in contrats %}
+										<tr class="text-center">
+											<td>{{ contrat.id }}</td>
+											<td>{{ contrat.nomContrat }}</td>
+											<td></td>
+											<td>
+												<form action="{{ path('contrat_edit', {'id': contrat.id}) }}" method="post" style="display: inline;">
+													<button type="submit" class="btn btn-warning">Modifier</button>
+												</form>
+												|
+												<form action="{{ path('contrat_delete', {'id': contrat.id}) }}" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce contrat ?');" style="display: inline;">
+													<button type="submit" class="btn btn-danger">Supprimer</button>
+												</form>
+											</td>
+										</tr>
+									{% else %}
+										<tr>
+											<td colspan="4">Aucun contrat trouvé.</td>
+										</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div class="col-xl-6">
+						<div class="card mb-4">
+							<div class="card-header">
+								<div class="d-flex justify-content-between align-items-center">
+									<div>
+										<i class="fa-solid fa-solid fa-user me-1"></i>
+										Comptes
+									</div>
+									<form action="{{ path('compte_ajout') }}" method="post">
+										<button type="submit" class="btn btn-success">Créer</button>
+									</form>
+								</div>
+							</div>
+
+							<table class="table">
+								<thead>
+									<tr class="text-center">
+										<th>ID</th>
+										<th>Nom du Compte</th>
+										<th></th>
+										<th>Actions</th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for compte in comptes %}
+										<tr class="text-center">
+											<td>{{ compte.id }}</td>
+											<td>{{ compte.nomCompte }}</td>
+											<td></td>
+											<td>
+
+												<form action="{{ path('compte_edit', {'id': compte.id}) }}" method="post" style="display: inline;">
+													<button type="submit" class="btn btn-warning">Modifier</button>
+												</form>
+												|
+												<form action="{{ path('compte_delete', {'id': compte.id}) }}" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce compte ?');" style="display: inline;">
+													<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ compte.id) }}">
+													<button type="submit" class="btn btn-danger">Supprimer</button>
+												</form>
+											</td>
+										</tr>
+									{% else %}
+										<tr>
+											<td colspan="4">Aucun compte trouvé.</td>
+										</tr>
+									{% endfor %}
+								</tbody>
+							</table>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div class="row">
-				<div class="col-xl-6">
-					<div class="card mb-4">
-						<div class="card-header">
-							<div class="d-flex justify-content-between align-items-center">
-								<div>
-									<i class="fa-solid fa-solid fa-user me-1"></i>
-									Employés
-								</div>
-								<form action="{{ path('user_ajout') }}" method="post">
-									<button type="submit" class="btn btn-success">Créer</button>
-								</form>
-							</div>
-						</div>
-
-						<table class="table">
-							<thead>
-								<tr class="text-center">
-									<th>ID</th>
-									<th>Login</th>
-									<th>Poste</th>
-									<th></th>
-									<th>Actions</th>
-								</tr>
-							</thead>
-							<tbody>
-								{% for user in users %}
-									<tr class="text-center">
-										<td>{{ user.id }}</td>
-										<td>{{ user.username }}</td>
-										<td>{{ user.type }}</td>
-										<td></td>
-										<td>
-
-											<form action="{{ path('user_edit', {'id': user.id}) }}" method="post" style="display: inline;">
-												<button type="submit" class="btn btn-warning">Modifier</button>
-											</form>
-											|
-											<form action="{{ path('user_delete', {'id': user.id}) }}" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?');" style="display: inline;">
-												<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
-												<button type="submit" class="btn btn-danger">Supprimer</button>
-											</form>
-										</td>
-									</tr>
-								{% else %}
-									<tr>
-										<td colspan="4">Aucun utilisateur trouvé.</td>
-									</tr>
-								{% endfor %}
-							</tbody>
-						</table>
-					</div>
-				</div>
-				<div class="col-xl-6">
-					<div class="card mb-4">
-						<div class="card-header">
-							<div class="d-flex justify-content-between align-items-center">
-								<div>
-									<i class="fa-solid fa-solid fa-user me-1"></i>
-									Liste des pièces justificatifs
-								</div>
-								<form action="{{ path('ajout_piece') }}" method="post">
-									<button type="submit" class="btn btn-success">Créer</button>
-								</form>
-							</div>
-						</div>
-
-						<table class="table">
-							<thead>
-								<tr class="text-center">
-									<th>ID</th>
-									<th>Pièce justificatif</th>
-									<th></th>
-									<th>Actions</th>
-								</tr>
-							</thead>
-							<tbody>
-								{% for piece in pieces %}
-									<tr class="text-center">
-										<td>{{ piece.id }}</td>
-										<td>{{ piece.nomPieceJustif }}</td>
-										<td></td>
-										<td>
-
-											<form action="{{ path('piece_edit', {'id': piece.id}) }}" method="post" style="display: inline;">
-												<button type="submit" class="btn btn-warning">Modifier</button>
-											</form>
-											|
-											<form action="{{ path('piece_delete', {'id': piece.id}) }}" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette pièce ?');" style="display: inline;">
-												<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ piece.id) }}">
-												<button type="submit" class="btn btn-danger">Supprimer</button>
-											</form>
-										</td>
-									</tr>
-								{% else %}
-									<tr>
-										<td colspan="4">Aucune pièce justificatif.</td>
-									</tr>
-								{% endfor %}
-							</tbody>
-						</table>
-					</div>
-				</div>
-				<div class="col-xl-6">
-					<div class="card mb-4">
-						<div class="card-header">
-							<div class="d-flex justify-content-between align-items-center">
-								<div>
-									<i class="fa-solid fa-file-contract me-1"></i>
-									Contrats
-								</div>
-								<form action="{{ path('ajout_contrat') }}" method="post">
-									<button type="submit" class="btn btn-success">Créer</button>
-								</form>
-							</div>
-
-						</div>
-						<table class="table">
-							<thead>
-								<tr class="text-center">
-									<th>ID</th>
-									<th>Nom du Contrat</th>
-									<th></th>
-									<th>Actions</th>
-								</tr>
-							</thead>
-							<tbody>
-								{% for contrat in contrats %}
-									<tr class="text-center">
-										<td>{{ contrat.id }}</td>
-										<td>{{ contrat.nomContrat }}</td>
-										<td></td>
-										<td>
-
-											<form action="{{ path('contrat_edit', {'id': contrat.id}) }}" method="post" style="display: inline;">
-												<button type="submit" class="btn btn-warning">Modifier</button>
-											</form>
-											|
-											<form action="{{ path('contrat_delete', {'id': contrat.id}) }}" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce contrat ?');" style="display: inline;">
-												<button type="submit" class="btn btn-danger">Supprimer</button>
-											</form>
-										</td>
-									</tr>
-								{% else %}
-									<tr>
-										<td colspan="4">Aucun contrat trouvé.</td>
-									</tr>
-								{% endfor %}
-							</tbody>
-						</table>
-					</div>
-				</div>
-				<div class="col-xl-6">
-					<div class="card mb-4">
-						<div class="card-header">
-							<div class="d-flex justify-content-between align-items-center">
-								<div>
-									<i class="fa-solid fa-solid fa-user me-1"></i>
-									Comptes
-								</div>
-								<form action="{{ path('compte_ajout') }}" method="post">
-									<button type="submit" class="btn btn-success">Créer</button>
-								</form>
-							</div>
-						</div>
-
-						<table class="table">
-							<thead>
-								<tr class="text-center">
-									<th>ID</th>
-									<th>Nom du Compte</th>
-									<th></th>
-									<th>Actions</th>
-								</tr>
-							</thead>
-							<tbody>
-								{% for compte in comptes %}
-									<tr class="text-center">
-										<td>{{ compte.id }}</td>
-										<td>{{ compte.nomCompte }}</td>
-										<td></td>
-										<td>
-
-											<form action="{{ path('compte_edit', {'id': compte.id}) }}" method="post" style="display: inline;">
-												<button type="submit" class="btn btn-warning">Modifier</button>
-											</form>
-											|
-											<form action="{{ path('compte_delete', {'id': compte.id}) }}" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce compte ?');" style="display: inline;">
-												<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ compte.id) }}">
-												<button type="submit" class="btn btn-danger">Supprimer</button>
-											</form>
-										</td>
-									</tr>
-								{% else %}
-									<tr>
-										<td colspan="4">Aucun compte trouvé.</td>
-									</tr>
-								{% endfor %}
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-	</main>
-</div>
+		</main>
+	</div>
 {% endblock %}
