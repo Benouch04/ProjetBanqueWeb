@@ -16,7 +16,7 @@ Every command in the following list needs to be be executed in the project root 
  - You can Git clone this repo at http://github.com/Benouch04/ProjetBanqueWeb.git
  - Run the command: composer install in your terminal (in the project root folder)
  - Input your database details in the .env file in the DATABASE_URL see Symfony doc for more details.
- - Again in the .env file set the database name as unison 
+ - Again in the .env file set the database name as ProjetBanqueWeb
  - Run the command: php bin/console make:migration in your terminal (in the project root folder)
  - If the previous command did not work see how to install the maker-bundle as a dev dependency in symfony doc. Then rerun the command.
  - Run the command: php bin/console doctrine:database:create 
