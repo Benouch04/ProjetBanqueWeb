@@ -4,7 +4,7 @@ This Web application offers several interfaces (Agent, Advisor and Manager) and 
 ## Requirements
 You will need at least PHP 8.3.6 to run ProjetBanqueWeb.
 
-ProjetBanqueWeb is a Symfony 6.1 website.
+ProjetBanqueWeb is a Symfony 6.1.12 website.
 
 ## Installation
 Few directions you will really need to respect in order to run this.
