@@ -9,8 +9,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
 
 class CompteType extends AbstractType
 {
@@ -20,8 +18,8 @@ class CompteType extends AbstractType
             ->add('nomCompte', TextType::class, [
                 'attr' => [
                     'class' => 'form-control',
-                    'minlength' => '2', // Corrigé ici
-                    'maxlength' => '50', // Corrigé ici
+                    'minlength' => '2', 
+                    'maxlength' => '50', 
                 ],
                 'required' => false,
                 'label' => 'Modifier le nom du contrat',
@@ -33,9 +31,9 @@ class CompteType extends AbstractType
                 ],
             ])
             ->add('submit', SubmitType::class, [
-                'label' => 'Appliquer', // Le texte du bouton est défini ici
+                'label' => 'Appliquer', 
                 'attr' => [
-                    'class' => 'btn btn-primary btn-lg mx-auto d-block mt-4', // Classes pour le style
+                    'class' => 'btn btn-primary btn-lg mx-auto d-block mt-4', 
                 ]
             ])
 

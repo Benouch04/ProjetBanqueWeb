@@ -33,8 +33,8 @@ class ContratType extends AbstractType
             ->add('submit', SubmitType::class, [
                 'attr' => [
                     'label' => 'Modifier',
-                    'class' => 'btn btn-primary btn-lg mx-auto d-block mt-4', // btn-lg pour agrandir, mx-auto et d-block pour centrer
-                    'style' => 'display: block; width: 50%;' // Ajoute une largeur de 50% et affiche le bouton en tant que block pour permettre le centrage
+                    'class' => 'btn btn-primary btn-lg mx-auto d-block mt-4', 
+                    'style' => 'display: block; width: 50%;' 
                 ]
             ]);
         ;

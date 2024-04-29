@@ -44,25 +44,20 @@ class UsersAuthenticator extends AbstractLoginFormAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
 {
-    // Récupérer l'utilisateur courant et ses rôles
     $user = $token->getUser();
     $roles = $user->getRoles();
 
-    // Déterminer le tableau de bord de redirection basé sur les rôles de l'utilisateur
     if (in_array('ROLE_ADMIN', $roles)) {
-        $redirectRoute = 'app_admin'; // Remplacez 'admin_dashboard' par la route de votre tableau de bord admin
+        $redirectRoute = 'app_admin'; 
     } elseif (in_array('ROLE_CONSEILLER', $roles)) {
-        $redirectRoute = 'app_conseiller'; // Remplacez 'conseiller_dashboard' par la route de votre tableau de bord conseiller
+        $redirectRoute = 'app_conseiller'; 
     } elseif (in_array('ROLE_AGENT', $roles)) {
-        $redirectRoute = 'app_agent'; // Remplacez 'agent_dashboard' par la route de votre tableau de bord agent
+        $redirectRoute = 'app_agent'; 
     } elseif (in_array('ROLE_DIRECTEUR', $roles)) {
-        $redirectRoute = 'app_directeur'; // Remplacez 'directeur_dashboard' par la route de votre tableau de bord directeur
+        $redirectRoute = 'app_directeur'; 
     } else {
-        // Si l'utilisateur n'a aucun des rôles ci-dessus ou un rôle par défaut, redirigez vers une page par défaut
-        $redirectRoute = 'main'; // Remplacez 'default_route' par la route de la page d'accueil ou une autre page par défaut
+        $redirectRoute = 'main'; 
     }
-
-    // Rediriger vers le tableau de bord approprié
     return new RedirectResponse($this->urlGenerator->generate($redirectRoute));
 }
 

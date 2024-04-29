@@ -23,10 +23,8 @@ class MotifRepository extends ServiceEntityRepository
 
     public function findAllIncludingAutre()
     {
-        // Récupérer tous les motifs existants
         $motifs = $this->findAll();
 
-        // Vérifier si 'Autre' est déjà dans la base de données
         $autreExists = false;
         foreach ($motifs as $motif) {
             if ($motif->getLibelleMotif() === 'Autre') {
@@ -34,16 +32,11 @@ class MotifRepository extends ServiceEntityRepository
                 break;
             }
         }
-
-        // Ajouter 'Autre' si nécessaire
         if (!$autreExists) {
             $autre = new Motif();
             $autre->setId(-1);
-            // Assurez-vous d'assigner les propriétés nécessaires à l'entité 'Autre'
             $autre->setLibelleMotif('Autre');
-            // Assurez-vous que l'ID que vous assignez ici ne se heurte pas aux IDs existants
-            // Vous pourriez vouloir définir cet ID à une valeur qui ne serait jamais un ID valide autrement
-            // Par exemple, en utilisant un nombre négatif
+
             $motifs[] = $autre;
         }
 

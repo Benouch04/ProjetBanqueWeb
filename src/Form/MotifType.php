@@ -16,11 +16,10 @@ class MotifType extends AbstractType
         $builder
         ->add('motifPj', EntityType::class, [
             'class' => PieceJustif::class,
-            'choice_label' => 'nomPieceJustif', // Utilisez le champ réel de l'entité PieceJustif qui doit être affiché
+            'choice_label' => 'nomPieceJustif', 
             'multiple' => true,
-            'expanded' => true, // Mettez à true pour utiliser des checkboxes
+            'expanded' => true, 
         ])
-        // Ajoutez d'autres champs comme nécessaire...
     ;
     }
 

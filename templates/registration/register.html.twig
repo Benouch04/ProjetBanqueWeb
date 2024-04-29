@@ -5,64 +5,74 @@
 
 {% block body %}
 
-<div id="layoutSidenav_content" class="justify-content-center bg-light">
-	<main>
-		<div class="container-fluid px-4">
-			<div class="row justify-content-center">
-				<div class="col-xl-10">
-					<div class="card mb-4">
-						<div class="card-header bg-primary">
-							<h3 class="text-center text-white font-weight-light my-4">Inscription</h3>
-						</div>
-						<div class="card-body">
-							{{ form_errors(registrationForm) }}
-							{{ form_start(registrationForm) }}
-
-							<div class="row mb-3">
-								<div class="col-md-6">
-									<div class="form-floating mb-3 mb-md-0">
-										{{ form_row(registrationForm.username, {'attr': {'class': 'form-control', 'placeholder': 'Login'}}) }}
-									</div>
-								</div>
-								<div class="col-md-6">
-									<div class="form-floating">
-										{{ form_row(registrationForm.plainPassword,  {'attr': {'class': 'form-control', 'placeholder': 'Mot de passe'}}) }}
-									</div>
-								</div>
+	<div id="layoutSidenav_content" class="justify-content-center bg-light">
+		<main>
+			{% for message in app.flashes('error') %}
+				<div class="alert alert-danger" role="alert">
+					{{ message }}
+				</div>
+			{% endfor %}
+			{% for message in app.flashes('success') %}
+				<div class="alert alert-success" role="alert">
+					{{ message }}
+				</div>
+			{% endfor %}
+			<div class="container-fluid px-4">
+				<div class="row justify-content-center">
+					<div class="col-xl-10">
+						<div class="card mb-4">
+							<div class="card-header bg-primary">
+								<h3 class="text-center text-white font-weight-light my-4">Inscription</h3>
 							</div>
-							<div class="row mb-3">
-								<div class="col-md-6">
-									<div class="form-floating mb-3 mb-md-0">
-										{{ form_row(registrationForm.lastname, {'attr': {'class': 'form-control', 'placeholder': 'Nom'}}) }}
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-floating">
-                                                {{ form_row(registrationForm.firstname,  {'attr': {'class': 'form-control', 'placeholder': 'Prénom'}}) }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row mb-3 justify-content-center">
-													<div class="col-sm-12 col-md-6">
-														<div class="form-floating">
-															{{ form_row(registrationForm.type, {'attr': {'class': 'form-control', 'placeholder': 'Type'}}) }}
-														</div>
-													</div>
-												</div>
-                                    <div class="row mb-3">
-                                        <div class="col-md-12">
-                                            <div class="form-check">
-                                                {{ form_row(registrationForm.ConsentementRGPD, {'label_attr': {'class': 'form-check-label'}, 'attr': {'class': 'form-check-input'}}) }}
-                                                
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="mt-4 mb-0">
-                                        <div class="d-grid">
-                                            <button class="btn btn-primary btn-block" type="submit">Inscrire</button>
-                                        </div>
-                                    </div>
-                                    			<div class="card-footer text-center py-3">
+							<div class="card-body">
+								{{ form_errors(registrationForm) }}
+								{{ form_start(registrationForm) }}
+
+								<div class="row mb-3">
+									<div class="col-md-6">
+										<div class="form-floating mb-3 mb-md-0">
+											{{ form_row(registrationForm.username, {'attr': {'class': 'form-control', 'placeholder': 'Login'}}) }}
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-floating">
+											{{ form_row(registrationForm.plainPassword,  {'attr': {'class': 'form-control', 'placeholder': 'Mot de passe'}}) }}
+										</div>
+									</div>
+								</div>
+								<div class="row mb-3">
+									<div class="col-md-6">
+										<div class="form-floating mb-3 mb-md-0">
+											{{ form_row(registrationForm.lastname, {'attr': {'class': 'form-control', 'placeholder': 'Nom'}}) }}
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-floating">
+											{{ form_row(registrationForm.firstname,  {'attr': {'class': 'form-control', 'placeholder': 'Prénom'}}) }}
+										</div>
+									</div>
+								</div>
+								<div class="row mb-3 justify-content-center">
+									<div class="col-sm-12 col-md-6">
+										<div class="form-floating">
+											{{ form_row(registrationForm.type, {'attr': {'class': 'form-control', 'placeholder': 'Type'}}) }}
+										</div>
+									</div>
+								</div>
+								<div class="row mb-3">
+									<div class="col-md-12">
+										<div class="form-check">
+											{{ form_row(registrationForm.ConsentementRGPD, {'label_attr': {'class': 'form-check-label'}, 'attr': {'class': 'form-check-input'}}) }}
+
+										</div>
+									</div>
+								</div>
+								<div class="mt-4 mb-0">
+									<div class="d-grid">
+										<button class="btn btn-primary btn-block" type="submit">Inscrire</button>
+									</div>
+								</div>
+								<div class="card-footer text-center py-3">
 									{% if app.user %}
 										{# L'utilisateur est connecté #}
 									{% else %}
@@ -71,18 +81,15 @@
 										</div>
 									{% endif %}
 								</div>
-                                    {{ form_end(registrationForm) }}
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</main>
+								{{ form_end(registrationForm) }}
+							</div>
 						</div>
-						{% block footer %}
-							<!-- Pied de page -->
-						{% endblock %}
 					</div>
-				</body>
-					
-			{% endblock %}
+				</div>
+			</div>
+		</main>
+	</div>
+	{% block footer %}
+		<!-- Pied de page -->
+	{% endblock %}
+</div></body>{% endblock %}

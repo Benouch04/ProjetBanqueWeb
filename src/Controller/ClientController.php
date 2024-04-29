@@ -12,14 +12,11 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Client;
 use App\Entity\CompteClient;
-use App\Entity\Calendar;
 use App\Form\ClientType;
 use App\Form\OperationType;
-use App\Form\CompteClientType;
 use App\Form\StatistiqueClientType;
 use App\Repository\ClientRepository;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 
@@ -96,15 +93,12 @@ class ClientController extends AbstractController
         $client = $entityManager->getRepository(Client::class)->find($id);
 
         if (!$client) {
-            // Handle the case where the contrat does not exist
             $this->addFlash('error', 'Client non trouvé');
             return $this->redirectToRoute('client_list');
         }
 
         $entityManager->remove($client);
         $entityManager->flush();
-
-        // Add a flash message or some kind of notification to let the contrat know it was successful
         $this->addFlash('success', 'Client supprimé avec succès');
 
         return $this->redirectToRoute('client_list');
@@ -126,18 +120,14 @@ class ClientController extends AbstractController
             if ($client) {
                 return $this->redirectToRoute('client_infos', ['id' => $client->getId()]);
             } else {
-                // Si le client n'est pas trouvé, ajoutez un message flash
                 $this->addFlash(
-                    'danger', // Le type de message, peut être 'danger', 'warning', 'success', etc.
+                    'danger', 
                     'Aucun client trouvé avec le nom ' . $query
                 );
-
-                // Redirigez l'utilisateur là où vous voulez, par exemple :
                 return $this->redirectToRoute('app_conseiller');
             }
         }
 
-        // Assurez-vous de retourner le formulaire de recherche pour qu'il soit rendu si aucune recherche n'a été faite ou si le formulaire n'est pas valide.
         return $this->render('main/conseiller.html.twig', [
             'searchForm' => $searchForm->createView(),
         ]);
@@ -154,15 +144,12 @@ class ClientController extends AbstractController
     {
         $client = $entityManager->getRepository(Client::class)->find($id);
         $user = $entityManager->getRepository(Users::class)->find($id);
-        $comptes = $entityManager->getRepository(CompteClient::class)->findAll();
-        $contrats = $entityManager->getRepository(ContratClient::class)->findAll();
         $form = $this->createForm(ClientInfoType::class, $client);
         $formOpe = $this->createForm(OperationType::class);
 
         if (!$client) {
             throw $this->createNotFoundException('Le client n\'a pas été trouvé.');
         }
-
         $conseiller = $client->getParent();
         $compteClients = $client->getCompteClients();
         $contratClients = $client->getContratClients();
@@ -205,7 +192,6 @@ class ClientController extends AbstractController
     #[Route('/client/statistiques', name: 'client_statistiques')]
     public function statistiquesClient(Request $request, ClientRepository $clientRepository, SessionInterface $session): Response
     {
-
         $formStatClient = $this->createForm(StatistiqueClientType::class);
         $formStatClient->handleRequest($request);
 

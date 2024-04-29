@@ -9,10 +9,7 @@ use App\Entity\Contrat;
 use App\Entity\ContratClient;
 use App\Entity\Motif;
 use App\Entity\CompteClient;
-use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Doctrine\ORM\EntityRepository;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use App\Form\CalendarType;
 use App\Form\CompteClientType;
 use App\Form\ContratClientType;
@@ -32,17 +29,14 @@ class CalendarController extends AbstractController
     #[Route("/", name: "calendar_index", methods: ["GET"])]
     public function index(EntityManagerInterface $entityManager, Request $request): Response
     {
-        $page = $request->query->getInt('page', 1); // Get the current page from the URL, default to 1
-        $maxResults = 9; // The number of calendar per page
+        $page = $request->query->getInt('page', 1); 
+        $maxResults = 9; 
 
-        // Calculating the offset
         $firstResult = ($page - 1) * $maxResults;
 
-        // Get the client repository and find the calendar with the offset and the limit
         $calendar = $entityManager->getRepository(Calendar::class)
             ->findBy([], null, $maxResults, $firstResult);
 
-        // Calculate the total number of pages
         $totalCalendar = count($entityManager->getRepository(Calendar::class)->findAll());
         $totalPages = ceil($totalCalendar / $maxResults);
 
@@ -61,10 +55,8 @@ class CalendarController extends AbstractController
         $nomComptes = $entityManager->getRepository(Compte::class)->findAll();
         $client = $entityManager->getRepository(Client::class)->findAll();
 
-        // Récupérez le client et le conseiller en utilisant les paramètres passés
         $client = $clientId ? $entityManager->getRepository(Client::class)->find($clientId) : null;
 
-        // Récupérez le conseiller associé au client (remplacez getParent par la méthode appropriée)
         $conseiller = $client ? $client->getParent() : null;
 
         $calendar = new Calendar();
@@ -73,16 +65,14 @@ class CalendarController extends AbstractController
             $calendar->setUsers($conseiller);
         }
 
-        // Créez le formulaire avec les données du client et du conseiller
         $form = $this->createForm(CalendarType::class, $calendar, [
             'client_name' => $client ? $client->getFullName() : '',
             'conseiller_name' => $conseiller ? $conseiller->getFullName() : '',
-            'nomContrat' => $nomContrats, // Assurez-vous que ce nom correspond à celui attendu dans le formulaire
-            'nomCompte' => $nomComptes, // Assurez-vous que ce nom correspond à celui attendu dans le formulaire
+            'nomContrat' => $nomContrats, 
+            'nomCompte' => $nomComptes, 
 
         ]);
 
-        //Affiche la valeur Autre dans la liste déroulante des motifs
         $motifRepository = $entityManager->getRepository(Motif::class);
         $autreMotif = $motifRepository->findOneBy(['libelleMotif' => 'Autre']);
 
@@ -106,14 +96,12 @@ class CalendarController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Vérifiez s'il existe déjà un événement qui se chevauche
             $start = $calendar->getStart();
             $end = $calendar->getEnd();
 
             $overlappingEvent = $entityManager->getRepository(Calendar::class)->findOneByOverlap($start, $end, $conseiller->getId());
 
             if ($overlappingEvent) {
-                // Ajoutez un message d'erreur et retournez au formulaire
                 $this->addFlash('error', 'Il existe déjà un événement durant cette période.');
                 return $this->render('calendar/new.html.twig', [
                     'calendar' => $calendar,
@@ -141,16 +129,14 @@ class CalendarController extends AbstractController
     {
         $calendar = $entityManager->getRepository(Calendar::class)->find($id);
         if (!$calendar) {
-            throw new NotFoundHttpException('No calendar found for id ' . $id);
-        }
-       
-        $client = $calendar->getClients(); // Assurez-vous que c'est la bonne méthode pour obtenir le client.
+            $this->addFlash('error', 'Le calendrier avec cet id existe pas :' . $id);
+        }    
+        $client = $calendar->getClients(); 
         $libelleMotif = $calendar->getMotif() ? $calendar->getMotif()->getLibelleMotif() : null;
 
          //Partie compte
         $compteExistant = $entityManager->getRepository(Compte::class)->findOneBy(['NomCompte' => $libelleMotif]);
 
-        // Assurez-vous que cette recherche correspond à la logique de votre base de données et à vos entités
         $compteClientExistant = null;
         if ($compteExistant) {
             $compteClientExistant = $entityManager->getRepository(CompteClient::class)->findOneBy([
@@ -170,7 +156,6 @@ class CalendarController extends AbstractController
         //Partie Contrat
         $contratExistant = $entityManager->getRepository(Contrat::class)->findOneBy(['nomContrat' => $libelleMotif]);
 
-        // Assurez-vous que cette recherche correspond à la logique de votre base de données et à vos entités
         $contratClientExistant = null;
         if ($contratExistant) {
             $contratClientExistant = $entityManager->getRepository(ContratClient::class)->findOneBy([
@@ -186,7 +171,6 @@ class CalendarController extends AbstractController
         $contratClient = new ContratClient();
            
         $formContrat = $this->createForm(ContratClientType::class, $contratClient);
-
 
         return $this->render('calendar/show.html.twig', [
             'formCompte' => $formCompte->createView(),
@@ -205,14 +189,14 @@ class CalendarController extends AbstractController
         $calendar = $entityManager->getRepository(Calendar::class)->find($id);
 
         if (!$calendar) {
-            throw new NotFoundHttpException('No calendar found for id ' . $id);
+            $this->addFlash('error', 'Le calendrier avec cet id existe pas :' . $id);
         }
 
         $form = $this->createForm(CalendarType::class, $calendar);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush(); // This line saves the modifications
+            $entityManager->flush(); 
 
             return $this->redirectToRoute('calendar_index');
         }
@@ -245,23 +229,15 @@ class CalendarController extends AbstractController
         $calendar = $entityManager->getRepository(Calendar::class)->find($id);
 
         if (!$calendar) {
-            throw new NotFoundHttpException('Aucun événement trouvé pour cet id ' . $id);
+            $this->addFlash('error', 'Aucun événement trouvé pour cet id ' . $id);
         }
-
-        // Ici, nous supposons que 'description' contient le motif.
-        // Vous devez ajuster ce code si le motif est stocké différemment.
         $description = $calendar->getMotif();
 
         if ($description === 'Ouverture compte') {
-            // Si le motif est l'ouverture d'un compte, personnalisez le message
             $this->addFlash('success', 'L\'ouverture du compte a été acceptée avec succès.');
         } else if ($description === 'Ouverture contrat') {
-            // Pour tout autre motif
             $this->addFlash('success', 'L\'ouverture du contrat a été acceptée avec succès.');
         }
-
-        // ... (ici la logique pour effectivement accepter l'événement)
-
         return $this->redirectToRoute('app_conseiller');
     }
 
@@ -281,6 +257,11 @@ class CalendarController extends AbstractController
 
         if ($formStatRdv->isSubmitted() && $formStatRdv->isValid()) {
             $data = $formStatRdv->getData();
+
+            if ($data['endDateRdv'] <= $data['startDateRdv']) {
+                $request->getSession()->getFlashBag()->add('error', 'La date de fin doit être supérieure à la date de début.');
+                return $this->redirectToRoute('app_directeur');
+            }
             $nombreRdv = $calendarRepository->countRdvByDate($data['startDateRdv'], $data['endDateRdv']);
 
             $session->set('searchRdv', true);

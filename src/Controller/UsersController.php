@@ -1,11 +1,7 @@
 <?php
 namespace App\Controller;
 
-use App\Entity\Directeur;
-use App\Entity\Conseiller;
-use App\Entity\Agent;
 use App\Entity\Users;
-use App\Entity\Contrat;
 use App\Form\RegistrationFormType;
 use App\Form\UsersType;
 use App\Security\UsersAuthenticator;
@@ -26,16 +22,15 @@ class UsersController extends AbstractController
         $user = new Users();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
-    
+
         if ($form->isSubmitted() && $form->isValid()) {
-            // encode the plain password
             $user->setPassword(
                 $userPasswordHasher->hashPassword(
                     $user,
                     $form->get('plainPassword')->getData()
                 )
             );
-            $type = $form->get('type')->getData(); 
+            $type = $form->get('type')->getData();
             switch ($type) {
                 case 'Conseiller':
                     $user->setRoles(['ROLE_CONSEILLER']);
@@ -47,21 +42,21 @@ class UsersController extends AbstractController
                     $user->setRoles(['ROLE_DIRECTEUR']);
                     break;
                 default:
-                    $user->setRoles(['ROLE_USER']); 
+                    $user->setRoles(['ROLE_USER']);
                     break;
             }
-    
+
             $entityManager->persist($user);
             $entityManager->flush();
-    
+
             return $this->redirectToRoute('app_directeur');
         }
-    
+
         return $this->render('registration/register.html.twig', [
             'registrationForm' => $form->createView(),
         ]);
     }
-    
+
     #[Route("/employe/edit/{id}", name: "user_edit")]
     public function editUsers(Request $request, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $entityManager, int $id): Response
     {
@@ -71,7 +66,6 @@ class UsersController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Mettre à jour l'username
             $user->setUsername($form->get('username')->getData());
 
             // Hash and set the new password
@@ -87,7 +81,7 @@ class UsersController extends AbstractController
 
             $this->addFlash('success', 'Les informations de l\'utilisateur ont été modifiées avec succès.');
 
-            return $this->redirectToRoute('users_list');
+            return $this->redirectToRoute('app_directeur');
         }
 
         return $this->render('users/edit.html.twig', [
@@ -113,6 +107,6 @@ class UsersController extends AbstractController
     #[Route('/users/list', name: 'users_list')]
     public function listUsers(EntityManagerInterface $entityManager): Response
     {
-        return $this->redirectToRoute('app_main');
+        return $this->redirectToRoute('app_directeur');
     }
 }

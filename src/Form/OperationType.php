@@ -16,12 +16,6 @@ class OperationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            /*->add('compte', EntityType::class, [
-                'class' => Compte::class,
-                'choice_label' => 'nomCompte',
-                'placeholder' => 'Choisissez un compte',
-                'attr' => ['class' => 'form-select mb-3'],
-            ])*/
             ->add('typeOperation', ChoiceType::class, [
                 'attr' => ['class' => 'form-select mb-3'],
                 'choices' => [
@@ -44,9 +38,9 @@ class OperationType extends AbstractType
                 'required' => true,
             ])
             ->add('submit', SubmitType::class, [
-                'label' => 'Appliquer', // Le texte du bouton est défini ici
+                'label' => 'Appliquer', 
                 'attr' => [
-                    'class' => 'btn btn-primary btn-lg mx-auto d-block mt-4', // Classes pour le style
+                    'class' => 'btn btn-primary btn-lg mx-auto d-block mt-4', 
                 ]
             ]);
     }

@@ -14,10 +14,9 @@ class StatistiqueSoldeType extends AbstractType
     {
         $builder
             ->add('dateOuverture', DateType::class, [
-                'widget' => 'single_text', // Changez ceci pour utiliser un seul champ de sélection de date.
+                'widget' => 'single_text', 
                 'label' => 'Choix d\'une date',
-                'attr' => ['class' => 'form-control'], // Ajoutez la classe form-control pour le style Bootstrap.
-                // Autres options...
+                'attr' => ['class' => 'form-control'], 
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Rechercher',

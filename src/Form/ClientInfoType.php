@@ -80,13 +80,12 @@ class ClientInfoType extends AbstractType
                     'Pacsé(e)' => 'Pacsé',
                     'Marié(e)' => 'Marié',
                     'Veuf / Veuve' => 'Veuf'
-                    // Ajoutez d'autres options ici
                 ],
                 'label' => false,
             ])
             ->add('parent', EntityType::class, [
                 'class' => Users::class,
-                'choice_label' => 'lastname', // ou toute autre propriété que vous voulez afficher
+                'choice_label' => 'lastname', 
                 'disabled' => true,
                 'attr' => [
                     'class' => 'form-control mb-3',
@@ -94,9 +93,9 @@ class ClientInfoType extends AbstractType
                 'label' => false,
             ])
             ->add('planning', SubmitType::class, [
-                'label' => 'Planning', // Le texte du bouton est défini ici
+                'label' => 'Planning', 
                 'attr' => [
-                    'class' => 'btn btn-primary btn-lg mx-auto d-block mt-4', // Classes pour le style
+                    'class' => 'btn btn-primary btn-lg mx-auto d-block mt-4', 
                 ]
             ])
         ;

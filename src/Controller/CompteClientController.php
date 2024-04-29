@@ -8,17 +8,12 @@ use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Compte;
-use App\Entity\Motif;
 use App\Entity\Calendar;
-use App\Entity\Client;
 use App\Entity\CompteClient;
 use App\Form\StatistiqueSoldeType;
 use App\Form\CompteClientType;
-use App\Controller\AccessDeniedException;
 use App\Repository\CompteClientRepository;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class CompteClientController extends AbstractController
 {
@@ -29,30 +24,6 @@ class CompteClientController extends AbstractController
             'controller_name' => 'CompteClientController',
         ]);
     }
-
-   /* #[Route("/client/compte/edit/{id}", name: "compteClient_edit")]
-    public function editClientCompte(Request $request, EntityManagerInterface $entityManager, int $id): Response
-    {
-        $compteClient = $entityManager->getRepository(CompteClient::class)->find($id);
-
-        $form = $this->createForm(CompteClientType::class, $compteClient);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-
-            $compteClient->setMontantDecouvert($form->get('montantDecouvert')->getData());
-            $compteClient->setSolde($form->get('solde')->getData());
-
-            $entityManager->flush();
-
-            return $this->redirectToRoute('compteClient_list');
-        }
-
-        return $this->render('compte_client/edit.html.twig', [
-            'compteClients' => $compteClient,
-            'form' => $form->createView(),
-        ]);
-    }*/
 
     #[Route("/client/compte/delete/{id}", name: "compteClient_delete", methods: ["POST"])]
     public function deleteCompteClient(int $id, EntityManagerInterface $entityManager): Response
@@ -85,16 +56,16 @@ class CompteClientController extends AbstractController
         $calendar = $entityManager->getRepository(Calendar::class)->find($id);
 
         if (!$calendar) {
-            throw new NotFoundHttpException('Rendez-vous non trouvé');
+            $this->addFlash('error', 'Rendez-vous non trouvé');
         }
 
-        $client = $calendar->getClients(); // Assurez-vous que c'est bien la méthode appropriée pour obtenir le client
+        $client = $calendar->getClients(); 
 
         $libelleMotif = $calendar->getMotif()->getLibelleMotif();
         $compteExistant = $entityManager->getRepository(Compte::class)->findOneBy(['NomCompte' => $libelleMotif]);
 
         if (!$compteExistant) {
-            throw new \Exception("Aucun compte avec le nom spécifié n'a été trouvé.");
+            $this->addFlash('error', 'Aucun compte avec le nom spécifié n\'a été trouvé.');
         }
 
         $compteClientExistant = $entityManager->getRepository(CompteClient::class)->findOneBy([
@@ -104,7 +75,7 @@ class CompteClientController extends AbstractController
 
         if ($compteClientExistant) {
             $session->set('compteCreationStatus', 'existant');
-            return $this->redirectToRoute('some_route', ['id' => $compteClientExistant->getId()]);
+            return $this->redirectToRoute('calendar_show', ['id' => $compteClientExistant->getId()]);
         }
 
         $compteClient = new CompteClient();
@@ -112,13 +83,12 @@ class CompteClientController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // ... logique de création de CompteClient
-            $compteClient->setDateOuverture(new \DateTime()); // Date actuelle
-            $compteClient->setSolde(0); // Solde initial
+            $compteClient->setDateOuverture(new \DateTime());
+            $compteClient->setSolde(0); 
             $montantDecouvert = $form->get('montantDecouvert')->getData();
             $compteClient->setMontantDecouvert($montantDecouvert);
-            $compteClient->setCompte($compteExistant); // Associez le compte existant
-            $client->addCompteClient($compteClient); // Associez le compte client au client
+            $compteClient->setCompte($compteExistant); 
+            $client->addCompteClient($compteClient); 
 
             $entityManager->persist($compteClient);
             $entityManager->flush();
@@ -126,8 +96,6 @@ class CompteClientController extends AbstractController
             $session->set('compteCreationStatus', 'nouveau');
             return $this->redirectToRoute('calendar_show', ['id' => $calendar->getId()]);
         }
-
-        // Si le formulaire n'est pas soumis ou n'est pas valide, retournez le formulaire
         return $this->render('calendar/show.html.twig', [
             'form' => $form->createView(),
             'calendar' => $calendar,

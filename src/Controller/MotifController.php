@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\Motif;
-use App\Entity\MotifPJ;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -30,7 +29,7 @@ class MotifController extends AbstractController
         $motif = $motifRepository->find($id);
 
         if (!$motif) {
-            throw $this->createNotFoundException("Aucun motif trouvé pour l'ID $id");
+            $this->addFlash('error', 'Aucun motif trouvé pour l\'ID');
         }
 
         $form = $this->createForm(MotifType::class, $motif);

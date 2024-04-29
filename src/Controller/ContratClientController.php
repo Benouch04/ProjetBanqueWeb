@@ -10,19 +10,10 @@ use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Contrat;
-use App\Entity\Motif;
 use App\Entity\Calendar;
-use App\Entity\Client;
 use App\Entity\ContratClient;
-use App\Form\CompteType;
-use App\Form\CompteClientType;
 use App\Repository\ContratClientRepository;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
-use App\Controller\AccessDeniedException;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class ContratClientController extends AbstractController
 {
@@ -36,29 +27,23 @@ class ContratClientController extends AbstractController
     #[Route('/client/contrat/{id}', name: 'contratClient_edit')]
     public function editContrat($id, Request $request, EntityManagerInterface $entityManager)
     {
-        // Trouvez le compte client par son ID
         $contratClient = $entityManager->getRepository(ContratClient::class)->find($id);
 
-        // Gérer le cas où le compte client n'existe pas
         if (!$contratClient) {
-            throw $this->createNotFoundException('Aucun contrat client trouvé pour cet ID.');
+            $this->addFlash('error', 'Aucun contrat client trouvé pour cet ID.');
         }
 
-        // Créez le formulaire en passant le compte client existant pour pré-remplir les données
         $formContrat = $this->createForm(ContratClientType::class, $contratClient);
 
         $formContrat->handleRequest($request);
 
         if ($formContrat->isSubmitted() && $formContrat->isValid()) {
-            // Si le formulaire est soumis et valide, mettez à jour et enregistrez le compte client
 
             $contratClient->setTarifMensuel($formContrat->get('tarifMensuel')->getData());
             $entityManager->flush();
 
-            // Ajoutez un message flash indiquant le succès de l'opération
             $this->addFlash('success', 'Le tarif mensuel a été mis à jour.');
 
-            // Redirigez l'utilisateur vers la page appropriée
             return $this->redirectToRoute('contrat_edit', ['id' => $contratClient->getId()]);
         }
 
@@ -98,16 +83,16 @@ class ContratClientController extends AbstractController
         $calendar = $entityManager->getRepository(Calendar::class)->find($id);
 
         if (!$calendar) {
-            throw new NotFoundHttpException('Rendez-vous non trouvé');
+            $this->addFlash('error', 'Rendez-vous non trouvé');
         }
 
-        $client = $calendar->getClients(); // Assurez-vous que c'est bien la méthode appropriée pour obtenir le client
+        $client = $calendar->getClients(); 
 
         $libelleMotif = $calendar->getMotif()->getLibelleMotif();
         $contratExistant = $entityManager->getRepository(Contrat::class)->findOneBy(['nomContrat' => $libelleMotif]);
 
         if (!$contratExistant) {
-            throw new \Exception("Aucun contrat avec le nom spécifié n'a été trouvé.");
+            $this->addFlash('error', 'Aucun contrat avec le nom spécifié n\'a été trouvé.');
         }
 
         $contratClientExistant = $entityManager->getRepository(ContratClient::class)->findOneBy([
@@ -117,7 +102,7 @@ class ContratClientController extends AbstractController
 
         if ($contratClientExistant) {
             $session->set('contratCreationStatus', 'existant');
-            return $this->redirectToRoute('some_route', ['id' => $contratClientExistant->getId()]);
+            return $this->redirectToRoute('contrat_ouverture', ['id' => $contratClientExistant->getId()]);
         }
 
         $contratClient = new ContratClient();
@@ -125,12 +110,11 @@ class ContratClientController extends AbstractController
         $formContrat->handleRequest($request);
 
         if ($formContrat->isSubmitted() && $formContrat->isValid()) {
-            // ... logique de création de ContratClient
-            $contratClient->setDateOuvertureContrat(new \DateTime()); // Date actuelle
+            $contratClient->setDateOuvertureContrat(new \DateTime()); 
             $tarifMensuel = $formContrat->get('tarifMensuel')->getData();
             $contratClient->setTarifMensuel($tarifMensuel);
-            $contratClient->setContrat($contratExistant); // Associez le contrat existant
-            $client->addContratClient($contratClient); // Associez le contrat client au client
+            $contratClient->setContrat($contratExistant); 
+            $client->addContratClient($contratClient); 
 
             $entityManager->persist($contratClient);
             $entityManager->flush();
@@ -139,7 +123,6 @@ class ContratClientController extends AbstractController
             return $this->redirectToRoute('calendar_show', ['id' => $calendar->getId()]);
         }
 
-        // Si le formulaire n'est pas soumis ou n'est pas valide, retournez le formulaire
         return $this->render('calendar/show.html.twig', [
             'formContrat' => $formContrat->createView(),
             'calendar' => $calendar,
@@ -155,6 +138,11 @@ class ContratClientController extends AbstractController
 
         if ($formStatContrat->isSubmitted() && $formStatContrat->isValid()) {
             $data = $formStatContrat->getData();
+
+            if ($data['endDateContrat'] <= $data['startDateContrat']) {
+                $request->getSession()->getFlashBag()->add('error', 'La date de fin doit être supérieure à la date de début.');
+                return $this->redirectToRoute('app_directeur');
+            }
             $nombreContrats = $contratClientRepository->countContratByDate($data['startDateContrat'], $data['endDateContrat']);
 
             $session->set('searchContrat', true);

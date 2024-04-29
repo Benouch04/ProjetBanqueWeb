@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\Calendar;
 use App\Entity\Client;
 use App\Entity\PieceJustif;
-use App\Form\CompteType;
 use App\Form\StatistiqueContratType;
 use App\Form\StatistiqueRdvType;
 use App\Form\StatistiqueClientType;
@@ -13,15 +12,11 @@ use App\Form\StatistiqueSoldeType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Security\UsersAuthenticator;
-use App\Repository\CalendarRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Users;
 use App\Entity\Contrat;
 use App\Entity\Compte;
-use App\Controller\ClientController;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
@@ -139,9 +134,9 @@ class MainController extends AbstractController
         $clients = $entityManager->getRepository(Client::class)->findAll();
 
         $form = $this->createFormBuilder(null)
-            ->setAction($this->generateUrl('client_search')) // Assurez-vous que la route 'client_search' est configurée
+            ->setAction($this->generateUrl('client_search')) 
             ->add('query', TextType::class, [
-                'label' => false, // On ne veut pas de label
+                'label' => false, 
                 'attr' => [
                     'placeholder' => 'Search for...',
                     'aria-label' => 'Search for...',
@@ -176,9 +171,9 @@ class MainController extends AbstractController
         $conseillers = $entityManager->getRepository(Users::class)->findBy(['type' => 'conseiller']);
 
         $form = $this->createFormBuilder(null)
-            ->setAction($this->generateUrl('client_search')) // Assurez-vous que la route 'client_search' est configurée
+            ->setAction($this->generateUrl('client_search')) 
             ->add('query', TextType::class, [
-                'label' => false, // On ne veut pas de label
+                'label' => false, 
                 'attr' => [
                     'placeholder' => 'Search for...',
                     'aria-label' => 'Search for...',

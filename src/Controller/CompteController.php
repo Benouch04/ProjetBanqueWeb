@@ -9,16 +9,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Compte;
 use App\Entity\Motif;
-use App\Entity\Calendar;
-use App\Entity\Users;
-use App\Entity\CompteClient;
 use App\Form\CompteType;
 use App\Repository\CompteRepository;
-use App\Form\CompteClientType;
-use App\Controller\AccessDeniedException;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
 #[Route('/directeur')]
 class CompteController extends AbstractController
@@ -69,7 +61,6 @@ class CompteController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Mettre à jour le compte
             $compte->setNomCompte($form->get('nomCompte')->getData());
             $entityManager->flush();
 
@@ -89,7 +80,6 @@ class CompteController extends AbstractController
         $compte = $entityManager->getRepository(Compte::class)->find($id);
 
         if (!$compte) {
-            // Handle the case where the compte does not exist
             $this->addFlash('error', 'Compte non trouvé');
             return $this->redirectToRoute('app_directeur');
         }
@@ -97,7 +87,6 @@ class CompteController extends AbstractController
         $entityManager->remove($compte);
         $entityManager->flush();
 
-        // Add a flash message or some kind of notification to let the compte know it was successful
         $this->addFlash('success', 'Compte supprimé avec succès');
 
         return $this->redirectToRoute('app_directeur');
@@ -105,6 +94,6 @@ class CompteController extends AbstractController
     #[Route('/compte/list', name: 'compte_list')]
     public function listCompte(EntityManagerInterface $entityManager): Response
     {
-        return $this->redirectToRoute('app_main');
+        return $this->redirectToRoute('app_directeur');
     }
 }

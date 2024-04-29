@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\Contrat;
-use App\Entity\Users;
 use App\Entity\Motif;
 use App\Form\ContratType;
 use App\Repository\ContratRepository;
@@ -36,7 +35,6 @@ class ContratController extends AbstractController
             $entityManager->persist($motif);
             $entityManager->flush();
 
-            // Redirection ou affichage d'un message de succès
             return $this->redirectToRoute('app_directeur');
         }
 
@@ -74,7 +72,6 @@ class ContratController extends AbstractController
         $contrat = $entityManager->getRepository(Contrat::class)->find($id);
 
         if (!$contrat) {
-            // Handle the case where the contrat does not exist
             $this->addFlash('error', 'Contrat non trouvé');
             return $this->redirectToRoute('app_directeur');
         }
@@ -82,7 +79,6 @@ class ContratController extends AbstractController
         $entityManager->remove($contrat);
         $entityManager->flush();
 
-        // Add a flash message or some kind of notification to let the contrat know it was successful
         $this->addFlash('success', 'Contrat supprimé avec succès');
 
         return $this->redirectToRoute('app_directeur');

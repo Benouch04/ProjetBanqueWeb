@@ -13,7 +13,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 class ClientType extends AbstractType
@@ -61,7 +60,7 @@ class ClientType extends AbstractType
                 'attr' => [
                     'class' => 'intl-tel-input',
                     'placeholder' => 'Téléphone',
-                    'style' => 'border: none;' // Ajout de cette ligne pour supprimer les bordures
+                    'style' => 'border: none;' 
                 ],
                 'label' => false,
             ])
@@ -80,7 +79,6 @@ class ClientType extends AbstractType
                     'Pacsé(e)' => 'Pacsé',
                     'Marié(e)' => 'Marié',
                     'Veuf / Veuve' => 'Veuf'
-                    // Ajoutez d'autres options ici
                 ],
                 'label' => false,
             ])
@@ -101,7 +99,7 @@ class ClientType extends AbstractType
             ])
             ->add('submit', SubmitType::class, [
                 'attr' => [
-                    'class' => 'btn btn-primary btn-lg mx-auto d-block mt-4', // btn-lg pour agrandir, mx-auto et d-block pour centrer
+                    'class' => 'btn btn-primary btn-lg mx-auto d-block mt-4', 
                 ],
                 'label' => 'Sauvegarder'
             ]);
