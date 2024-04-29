@@ -21,7 +21,15 @@ class PieceJustifRepository extends ServiceEntityRepository
         parent::__construct($registry, PieceJustif::class);
     }
 
-//    /**
+    public function findByNomPieceJustif($nomPieceJustif)
+    {
+        return $this->createQueryBuilder('p')
+            ->where('p.nomPieceJustif = :nom')
+            ->setParameter('nom', $nomPieceJustif)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+    //    /**
 //     * @return PieceJustif[] Returns an array of PieceJustif objects
 //     */
 //    public function findByExampleField($value): array
@@ -36,7 +44,7 @@ class PieceJustifRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?PieceJustif
+    //    public function findOneBySomeField($value): ?PieceJustif
 //    {
 //        return $this->createQueryBuilder('p')
 //            ->andWhere('p.exampleField = :val')

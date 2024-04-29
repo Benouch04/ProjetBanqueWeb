@@ -1,54 +1,72 @@
+<link href="{{ asset('sbadmin/css/styles.css') }}" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"/>
+<script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 
-
-		<link href="{{ asset('sbadmin/css/styles.css') }}" rel="stylesheet">
-		<link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet"/>
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"/>
-		<script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
-	
 
 {% block body %}
-<div class="container">
-    <div class="row justify-content-center align-items-center vh-100">
-        <div class="col-md-6 col-lg-4">
-            <!-- Card pour le formulaire de login -->
-            <div class="card shadow">
-                <div class="card-header text-center bg-transparent">
-                    <img src="{{ asset('sbadmin/image/logo.png') }}" alt="Logo de la banque" class="mb-3">
-                    <h3 class="card-title">Connexion</h3>
-                </div>
-                <div class="card-body">
-                    <!-- Affichage des messages d'erreur -->
-                    {% if error %}
-                        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-                    {% endif %}
+	<div class="container">
+		<div class="row justify-content-center align-items-center vh-100">
+			<div
+				class="col-md-6 col-lg-4">
+				<!-- Card pour le formulaire de login -->
+				<div class="card shadow">
+					<div class="card-header text-center bg-transparent">
+						<img src="{{ asset('sbadmin/image/logo.png') }}" alt="Logo de la banque" class="mb-3">
+						<h3 class="card-title">Connexion</h3>
+					</div>
+					<div
+						class="card-body">
+						<!-- Affichage des messages d'erreur -->
+						{% if error %}
+							<div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+						{% endif %}
 
-                    <!-- Vérification si l'utilisateur est déjà connecté -->
-                    {% if app.user %}
-                        <div class="mb-3 text-center">
-                            Vous êtes connecté en tant que {{ app.user.username }}, <a href="{{ path('app_logout') }}">Déconnexion</a>
-                        </div>
-                    {% else %}
-                        <form method="post">
-                            <div class="mb-3">
-                                <label for="inputUsername" class="form-label">Identifiant</label>
-                                <input type="text" value="{{ last_username }}" name="username" id="inputUsername" class="form-control" autocomplete="username" required autofocus>
-                            </div>
-                            <div class="mb-3">
-                                <label for="inputPassword" class="form-label">Mot de passe</label>
-                                <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
-                            </div>
-                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-                            <div class="d-grid">
-                                <button type="submit" class="btn btn-primary">Se connecter</button>
-                            </div>
-                        </form>
-                        <div class="text-center mt-3">
-                            <a href="test.html">Mot de passe oublié ?</a>
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+						<!-- Vérification si l'utilisateur est déjà connecté -->
+						{% if app.user %}
+							<div class="mb-3 text-center">
+								Vous êtes connecté en tant que
+								{{ app.user.username }},
+								<a href="{{ path('app_logout') }}">Déconnexion</a>
+							</div>
+						{% else %}
+							<form method="post">
+								<div class="mb-3">
+									<label for="inputUsername" class="form-label">Identifiant</label>
+									<input type="text" value="{{ last_username }}" name="username" id="inputUsername" class="form-control" autocomplete="username" required autofocus>
+								</div>
+								<div class="mb-3">
+									<label for="inputPassword" class="form-label">Mot de passe</label>
+									<input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
+								</div>
+								<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+								<div class="d-grid">
+									<button type="submit" class="btn btn-primary">Se connecter</button>
+								</div>
+							</form>
+							<div class="text-center mt-3">
+								<a href="test.html">Mot de passe oublié ?</a>
+							</div>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+{% block footer %}
+
+	<div class="py-4 bg-light mt-auto">
+		<div class="container-fluid px-4">
+			<div class="d-flex align-items-center justify-content-between small">
+				<div class="text-muted">Copyright &copy; Your Website 2023</div>
+				<div>
+					<a href="#">Privacy Policy</a>
+					&middot;
+					<a href="#">Terms &amp; Conditions</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
 {% endblock %}

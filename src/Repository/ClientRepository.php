@@ -21,7 +21,27 @@ class ClientRepository extends ServiceEntityRepository
         parent::__construct($registry, Client::class);
     }
 
-//    /**
+    public function findByNomPrenom($nom, $prenom)
+    {
+        return $this->createQueryBuilder('c')
+            ->where('c.nomClient = :nom')
+            ->andWhere('c.prenomClient = :prenom')
+            ->setParameter('nom', $nom)
+            ->setParameter('prenom', $prenom)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function countClientByDate(\DateTimeInterface $dateAjout): int
+    {
+        return $this->createQueryBuilder('c')
+            ->select('count(c.id)')
+            ->where('c.dateAjout <= :dateAjout')
+            ->setParameter('dateAjout', $dateAjout)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+    //    /**
 //     * @return Client[] Returns an array of Client objects
 //     */
 //    public function findByExampleField($value): array
@@ -36,7 +56,7 @@ class ClientRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Client
+    //    public function findOneBySomeField($value): ?Client
 //    {
 //        return $this->createQueryBuilder('c')
 //            ->andWhere('c.exampleField = :val')

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\ContratClient;
 use App\Entity\Users;
 use App\Form\ClientInfoType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -13,9 +14,13 @@ use App\Entity\Client;
 use App\Entity\CompteClient;
 use App\Entity\Calendar;
 use App\Form\ClientType;
+use App\Form\OperationType;
 use App\Form\CompteClientType;
+use App\Form\StatistiqueClientType;
+use App\Repository\ClientRepository;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 
 class ClientController extends AbstractController
@@ -29,19 +34,24 @@ class ClientController extends AbstractController
     }
 
     #[Route('/client/ajout', name: 'client_ajout')]
-    public function ajoutClient(Request $request, EntityManagerInterface $entityManager)
+    public function ajoutClient(Request $request, EntityManagerInterface $entityManager, ClientRepository $clientRepository)
     {
         $client = new Client();
         $form = $this->createForm(ClientType::class, $client);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
 
+            $existingClient = $clientRepository->findByNomPrenom($client->getNomClient(), $client->getPrenomClient());
+            if ($existingClient) {
+                $this->addFlash('danger', 'Un client avec le même nom et prénom existe déjà.');
+                return $this->redirectToRoute('client_ajout');
+            }
+            $client->setDateAjout(new \DateTime());
             $entityManager->persist($client);
             $entityManager->flush();
 
             $this->addFlash('success', 'Le client a été ajouté avec succès');
-            // Redirection ou affichage d'un message de succès
+
             return $this->redirectToRoute('client_list');
         }
 
@@ -110,6 +120,7 @@ class ClientController extends AbstractController
 
         if ($searchForm->isSubmitted() && $searchForm->isValid()) {
             $query = $searchForm->getData()['query'];
+            
             $client = $entityManager->getRepository(Client::class)->findOneBy(['nomClient' => $query]);
 
             if ($client) {
@@ -136,29 +147,81 @@ class ClientController extends AbstractController
     {
         return $this->redirectToRoute('app_conseiller');
     }
-    // Dans ClientController.php ou le contrôleur qui gère l'affichage des infos client
+
 
     #[Route('/client/infos/{id}', name: 'client_infos')]
-    public function show($id, EntityManagerInterface $entityManager): Response
+    public function show($id, EntityManagerInterface $entityManager, Request $request): Response
     {
         $client = $entityManager->getRepository(Client::class)->find($id);
         $user = $entityManager->getRepository(Users::class)->find($id);
+        $comptes = $entityManager->getRepository(CompteClient::class)->findAll();
+        $contrats = $entityManager->getRepository(ContratClient::class)->findAll();
         $form = $this->createForm(ClientInfoType::class, $client);
-        $compte = $entityManager->getRepository(CompteClient::class)->find($id);
-        $formCompte = $this->createForm(CompteClientType::class, $compte);
+        $formOpe = $this->createForm(OperationType::class);
+
         if (!$client) {
             throw $this->createNotFoundException('Le client n\'a pas été trouvé.');
         }
 
         $conseiller = $client->getParent();
+        $compteClients = $client->getCompteClients();
+        $contratClients = $client->getContratClients();
 
+         //Pagination pour les contrats
+         $pageContrats = $request->query->getInt('pageContrats', 1);
+         $maxResults = 3;
+         $firstResult = ($pageContrats - 1) * $maxResults;
+         $criteriaContrats = ['client' => $id];
+         $contrats = $entityManager->getRepository(ContratClient::class)
+             ->findBy($criteriaContrats, null, $maxResults, $firstResult);
+         $totalContrats = count($entityManager->getRepository(ContratClient::class)->findBy($criteriaContrats));
+         $totalPagesContrats = ceil($totalContrats / $maxResults);
+ 
+         //Pagination pour les comptes
+         $pageComptes = $request->query->getInt('pageComptes', 1);
+         $maxResults = 3;
+         $firstResult = ($pageComptes - 1) * $maxResults;
+         $criteriaComptes = ['client' => $id];
+         $comptes = $entityManager->getRepository(CompteClient::class)
+             ->findBy($criteriaComptes, null, $maxResults, $firstResult);
+         $totalComptes = count($entityManager->getRepository(CompteClient::class)->findBy($criteriaComptes));
+         $totalPagesComptes = ceil($totalComptes / $maxResults);
 
         return $this->render('client/info.html.twig', [
             'client' => $client,
             'user' => $user,
             'form' => $form->createView(),
-            'formCompte' => $formCompte->createView(),
+            'formOpe' => $formOpe->createView(),
             'conseiller' => $conseiller,
+            'compteClients' => $compteClients,
+            'contratClients' => $contratClients,
+            'totalPagesContrats' => $totalPagesContrats,
+            'currentPageContrats' => $pageContrats,
+            'totalPagesComptes' => $totalPagesComptes,
+            'currentPageComptes' => $pageComptes,
+        ]);
+    }
+
+    #[Route('/client/statistiques', name: 'client_statistiques')]
+    public function statistiquesClient(Request $request, ClientRepository $clientRepository, SessionInterface $session): Response
+    {
+
+        $formStatClient = $this->createForm(StatistiqueClientType::class);
+        $formStatClient->handleRequest($request);
+
+        if ($formStatClient->isSubmitted() && $formStatClient->isValid()) {
+            $data = $formStatClient->getData();
+            $nombreClient = $clientRepository->countClientByDate($data['dateAjout']);
+
+            $session->set('searchClient', true);
+            $session->set('nombreClient', $nombreClient);
+            $session->set('dateAjout', $data['dateAjout']);
+
+            return $this->redirectToRoute('app_directeur');
+        }
+
+        return $this->render('client/statistiques.html.twig', [
+            'formStatClient' => $formStatClient->createView(),
         ]);
     }
 

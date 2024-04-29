@@ -28,42 +28,35 @@
 				class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
 				<!-- Navbar Brand-->
 				{% if app.user %}
-					<a class="navbar-brand ps-3" href="index.html">{{ app.user.firstname }}
+					<a class="navbar-brand ps-3">{{ app.user.firstname }}
 						{{ app.user.lastname }}</a>
 				{% else %}
-					<a class="navbar-brand ps-3" href="index.html">Invité</a>
+					<a class="navbar-brand ps-3">Invité</a>
 				{% endif %}
 				<!-- Sidebar Toggle-->
 				<button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!">
 					<i class="fas fa-bars"></i>
 				</button>
 				<!-- Navbar Search-->
-				<form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
-					<div class="input-group">
-						<input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..." aria-describedby="btnNavbarSearch"/>
-						<button class="btn btn-primary" id="btnNavbarSearch" type="button">
-							<i class="fas fa-search"></i>
-						</button>
-					</div>
-				</form>
+				<form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0"></form>
 				<!-- Navbar-->
 				<ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
 					<li class="nav-item dropdown">
+					{% if app.user %}
 						<a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 							<i class="fas fa-user fa-fw"></i>
-						</a>
-						<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-							<li>
-								<a class="dropdown-item" href="#!">Settings</a>
+						</a>					
+							<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+								<li>
+									<a class="dropdown-item" href="{{ path('app_logout') }}">Logout</a>
+								</li>
+							</ul>
+						{% else %}
+							<li class="nav-item">
+								<a class="btn btn-primary" href="{{ path('app_login') }}">Login</a>
 							</li>
-							<li>
-								<a class="dropdown-item" href="#!">Activity Log</a>
-							</li>
-							<li><hr class="dropdown-divider"/></li>
-							<li>
-								<a class="dropdown-item" href="{{ path('app_logout') }}">Logout</a>
-							</li>
-						</ul>
+						{% endif %}
+
 					</li>
 				</ul>
 			</nav>
@@ -72,93 +65,137 @@
 					<nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
 						<div class="sb-sidenav-menu">
 							<div class="nav">
-								<div class="sb-sidenav-menu-heading">Core</div>
-								<a class="nav-link" href="index.html">
-									<div class="sb-nav-link-icon">
-										<i class="fas fa-tachometer-alt"></i>
-									</div>
-									Dashboard
-								</a>
-								<div class="sb-sidenav-menu-heading">Ajout</div>
-								<a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayout" aria-expanded="false" aria-controls="collapseLayouts">
-									<div class="sb-nav-link-icon">
-										<i class="fas fa-columns"></i>
-									</div>
-									Client
-									<div class="sb-sidenav-collapse-arrow">
-										<i class="fas fa-angle-down"></i>
-									</div>
-								</a>
-								<div class="sb-sidenav-menu-heading">Interface</div>
-								<a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
-									<div class="sb-nav-link-icon">
-										<i class="fas fa-columns"></i>
-									</div>
-									Layouts
-									<div class="sb-sidenav-collapse-arrow">
-										<i class="fas fa-angle-down"></i>
-									</div>
-								</a>
-								<div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
-									<nav class="sb-sidenav-menu-nested nav">
-										<a class="nav-link" href="layout-static.html">Static Navigation</a>
-										<a class="nav-link" href="layout-sidenav-light.html">Light Sidenav</a>
-									</nav>
-								</div>
-								<a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
-									<div class="sb-nav-link-icon">
-										<i class="fas fa-book-open"></i>
-									</div>
-									Employé
-									<div class="sb-sidenav-collapse-arrow">
-										<i class="fas fa-angle-down"></i>
-									</div>
-								</a>
-								<div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
-									<nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
-										<a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseAuth" aria-expanded="false" aria-controls="pagesCollapseAuth">
-											Authentication
-											<div class="sb-sidenav-collapse-arrow">
-												<i class="fas fa-angle-down"></i>
+								<div class="sb-sidenav-menu-heading">Accueil</div>
+								{% if app.user %}
+									{% if is_granted('ROLE_DIRECTEUR') %}
+										<a class="nav-link" href="{{ path('app_directeur')}}">
+											<div class="sb-nav-link-icon">
+												<i class="fas fa-tachometer-alt"></i>
 											</div>
+											Dashboard
 										</a>
-										<div class="collapse" id="pagesCollapseAuth" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordionPages">
-											<nav class="sb-sidenav-menu-nested nav">
-												<a class="nav-link" href="{{ path('app_login') }}">Login</a>
-												<a class="nav-link" href="{{ path('user_ajout') }}">Register</a>
-												<a class="nav-link" href="password.html">Forgot Password</a>
-											</nav>
+									{% elseif is_granted('ROLE_CONSEILLER') %}
+										<a class="nav-link" href="{{ path('app_conseiller')}}">
+											<div class="sb-nav-link-icon">
+												<i class="fas fa-tachometer-alt"></i>
+											</div>
+											Dashboard
+										</a>
+									{% elseif is_granted('ROLE_AGENT') %}
+										<a class="nav-link" href="{{ path('app_conseiller')}}">
+											<div class="sb-nav-link-icon">
+												<i class="fas fa-tachometer-alt"></i>
+											</div>
+											Dashboard
+										</a>
+									{% else %}
+										<a class="nav-link" href="{{ path('main')}}">
+											<div class="sb-nav-link-icon">
+												<i class="fas fa-tachometer-alt"></i>
+											</div>
+											Dashboard
+										</a>
+									{% endif %}
+								{% endif %}
+								<div class="sb-sidenav-menu-heading">Fonctionnalités</div>
+								{% if is_granted('ROLE_CONSEILLER') or is_granted('ROLE_AGENT') %}
+									<a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseClient" aria-expanded="false" aria-controls="collapseClient">
+										<div class="sb-nav-link-icon">
+											<i class="fas fa-person"></i>
 										</div>
-										{% if app.user %}
-											<a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseEmploye" aria-expanded="false" aria-controls="pagesCollapseEmploye">
-												Modification
+										Client
+										<div class="sb-sidenav-collapse-arrow">
+											<i class="fas fa-angle-down"></i>
+										</div>
+									</a>
+									<div class="collapse" id="collapseClient" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+										<nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
+											<a class="nav-link" href="{{ path('client_ajout') }}">
+												Créer
+											</a>
+											<div class="collapse" id="pagesCollapseAuthEmp" aria-labelledby="headingOne" data-bs-parent="#collapseClient"></div>
+										</nav>
+									</div>
+								{% endif %}
+								{% if is_granted('ROLE_DIRECTEUR') %}
+									<a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseEmployee" aria-expanded="false" aria-controls="collapseEmployee">
+										<div class="sb-nav-link-icon">
+											<i class="fas fa-user"></i>
+										</div>
+										Employé
+										<div class="sb-sidenav-collapse-arrow">
+											<i class="fas fa-angle-down"></i>
+										</div>
+									</a>
+									<div class="collapse" id="collapseEmployee" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
+										<nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
+											<a class="nav-link" href="{{ path('user_ajout') }}">
+												Créer
+											</a>
+											<div
+												class="collapse" id="pagesCollapseAuthEmp" aria-labelledby="headingOne" data-bs-parent="#collapseEmployee"><!-- Ici, ajoutez vos liens pour le sous-menu Créer de Employé -->
+											</div>
+										</nav>
+									</div>
+									<a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseAccount" aria-expanded="false" aria-controls="collapseAccount">
+										<div class="sb-nav-link-icon">
+											<i class="fas fa-vault"></i>
+										</div>
+										Compte
+										<div class="sb-sidenav-collapse-arrow">
+											<i class="fas fa-angle-down"></i>
+										</div>
+									</a>
+									<div class="collapse" id="collapseAccount" aria-labelledby="headingThree" data-bs-parent="#sidenavAccordion">
+										<nav class="sb-sidenav-menu-nested nav accordion">
+											<a class="nav-link" href="{{ path('compte_ajout') }}">Créer</a>
+										</nav>
+									</div>
+									<a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseContract" aria-expanded="false" aria-controls="collapseContract">
+										<div class="sb-nav-link-icon">
+											<i class="fas fa-file-contract"></i>
+										</div>
+										Contrat
+										<div class="sb-sidenav-collapse-arrow">
+											<i class="fas fa-angle-down"></i>
+										</div>
+									</a>
+									<div class="collapse" id="collapseContract" aria-labelledby="headingThree" data-bs-parent="#sidenavAccordion">
+										<nav class="sb-sidenav-menu-nested nav accordion">
+											<a class="nav-link" href="{{ path('ajout_contrat') }}">Créer</a>
+										</nav>
+									</div>
+									<a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseProof" aria-expanded="false" aria-controls="collapseProof">
+										<div class="sb-nav-link-icon">
+											<i class="fas fa-book"></i>
+										</div>
+										Pièce justificatif
+										<div class="sb-sidenav-collapse-arrow">
+											<i class="fas fa-angle-down"></i>
+										</div>
+									</a>
+									<div class="collapse" id="collapseProof" aria-labelledby="headingFive" data-bs-parent="#sidenavAccordion">
+										<nav class="sb-sidenav-menu-nested nav">
+											<a class="nav-link" href="{{ path('ajout_piece') }}">Créer</a>
+										</nav>
+									</div>
+									<div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
+										<nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
+											<a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseAuth" aria-expanded="false" aria-controls="pagesCollapseAuth">
+												Créer
 												<div class="sb-sidenav-collapse-arrow">
 													<i class="fas fa-angle-down"></i>
 												</div>
 											</a>
-
-											<div class="collapse" id="pagesCollapseEmploye" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordionPages">
-												<nav class="sb-sidenav-menu-nested nav">
-													<a class="nav-link" href="{{ path('user_edit', {'id': app.user.id}) }}">Login</a>
-													<a class="nav-link" href="404.html">Mot de passe</a>
-												</nav>
-											</div>
-										{% endif %}
-									</nav>
-								</div>
-								<div class="sb-sidenav-menu-heading">Addons</div>
-								<a class="nav-link" href="charts.html">
-									<div class="sb-nav-link-icon">
-										<i class="fas fa-chart-area"></i>
+										</nav>
 									</div>
-									Charts
-								</a>
-								<a class="nav-link" href="tables.html">
-									<div class="sb-nav-link-icon">
-										<i class="fas fa-table"></i>
-									</div>
-									Tables
-								</a>
+									<a class="nav-link" href="{{ path('app_directeur') }}">
+										<div class="sb-nav-link-icon">
+											<i class="fas fa-chart-area"></i>
+										</div>
+										Statistiques
+									</a>
+								{% endif %}
 							</div>
 						</div>
 						<div class="sb-sidenav-footer">
@@ -194,17 +231,17 @@
 
 	</body>
 	<!--<footer>
-		<div class="py-4 bg-light mt-auto">
-			<div class="container-fluid px-4">
-				<div class="d-flex align-items-center justify-content-between small">
-					<div class="text-muted">Copyright &copy; Your Website 2023</div>
-					<div>
-						<a href="#">Privacy Policy</a>
-						&middot;
-						<a href="#">Terms &amp; Conditions</a>
-					</div>
-				</div>
-			</div>
-		</div>
-	</footer>-->
+													<div class="py-4 bg-light mt-auto">
+														<div class="container-fluid px-4">
+															<div class="d-flex align-items-center justify-content-between small">
+																<div class="text-muted">Copyright &copy; Your Website 2023</div>
+																<div>
+																	<a href="#">Privacy Policy</a>
+																	&middot;
+																	<a href="#">Terms &amp; Conditions</a>
+																</div>
+															</div>
+														</div>
+													</div>
+												</footer>-->
 </html>

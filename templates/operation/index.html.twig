@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajout d'une pièce justificative
+{% endblock %}
+
+{% block body %}
+	<div id="layoutSidenav_content" class="justify-content-center bg-light">
+		{% for message in app.flashes('success') %}
+			<div class="alert alert-success" role="alert">
+				{{ message }}
+			</div>
+		{% endfor %}
+		{% for message in app.flashes('error') %}
+			<div class="alert alert-danger" role="alert">
+				{{ message }}
+			</div>
+		{% endfor %}
+		<main>
+			<div class="container-fluid px-4">
+				<div class="row justify-content-center">
+					<div class="col-xl-10">
+						<div class="card mb-4">
+							<div class="card-header bg-primary">
+								<h3 class="text-center text-white font-weight-light my-4">Compte</h3>
+							</div>
+							<div class="card-body">
+								{% if is_granted('ROLE_CONSEILLER') %}
+									{{ form_start(formCompte) }}
+									<h3 class="text-center">Modification du montant à découvert</h3>
+									<div class="form-group">
+										{{ form_label(formCompte.montantDecouvert, 'Montant de découvert (€)') }}
+										{{ form_widget(formCompte.montantDecouvert, {'attr': {'class': 'form-control'}}) }}
+									</div>
+
+									<div class="form-group">
+										<button type="submit" class="btn btn-success btn-lg mx-auto d-block mt-4" style="width: fit-content;">
+											Accepter
+										</button>
+									</div>
+									{{ form_end(formCompte) }}
+								{% endif %}
+								{% if is_granted('ROLE_AGENT') %}
+									{{ form_start(formOpe, {'action': path('operation_create', {'compteClientId': compteClient.id}), 'method': 'POST'}) }}
+									<h3 class="text-center">Opération sur le compte</h3>
+									<div class="form-group">
+										{{ form_label(formOpe.typeOperation, 'Dépôt ou retrait') }}
+										{{ form_widget(formOpe.typeOperation) }}
+										{{ form_widget(formOpe.montant) }}
+									</div>
+									<div class="form-group">
+										{{ form_widget(formOpe.submit) }}
+									</div>
+									{{ form_end(formOpe) }}
+								{% endif %}
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</main>
+	</div>
+{% endblock %}

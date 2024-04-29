@@ -21,7 +21,15 @@ class ContratRepository extends ServiceEntityRepository
         parent::__construct($registry, Contrat::class);
     }
 
-//    /**
+    public function findByNomContrat($nomContrat)
+    {
+        return $this->createQueryBuilder('c')
+            ->where('c.nomContrat = :nom')
+            ->setParameter('nom', $nomContrat)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+    //    /**
 //     * @return Contrat[] Returns an array of Contrat objects
 //     */
 //    public function findByExampleField($value): array
@@ -36,7 +44,7 @@ class ContratRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Contrat
+    //    public function findOneBySomeField($value): ?Contrat
 //    {
 //        return $this->createQueryBuilder('c')
 //            ->andWhere('c.exampleField = :val')

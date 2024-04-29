@@ -34,6 +34,17 @@ class CalendarRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+    public function countRdvByDate(\DateTimeInterface $startDateRdv, \DateTimeInterface $endDateRdv): int
+    {
+        return $this->createQueryBuilder('c')
+            ->select('count(c.id)')
+            ->where('c.start >= :start')
+            ->andWhere('c.end <= :end')
+            ->setParameter('start', $startDateRdv)
+            ->setParameter('end', $endDateRdv)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
     //    /**
 //     * @return Calendar[] Returns an array of Calendar objects
 //     */

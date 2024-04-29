@@ -13,17 +13,22 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-
+#[Route('/directeur')]
 class ContratController extends AbstractController
 {
     #[Route('/contrat/ajout', name: 'ajout_contrat')]
-    public function ajoutContrat(Request $request, EntityManagerInterface $entityManager)
+    public function ajoutContrat(Request $request, EntityManagerInterface $entityManager, ContratRepository $contratRepository)
     {
         $contrat = new Contrat();
         $form = $this->createForm(ContratType::class, $contrat);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $existingContrat = $contratRepository->findByNomContrat($contrat->getNomContrat());
+            if ($existingContrat) {
+                $this->addFlash('danger', 'Un contrat avec le même nom existe déjà.');
+                return $this->redirectToRoute('ajout_contrat');
+            }
             $entityManager->persist($contrat);
             $motif = new Motif();
             $motif->setLibelleMotif($contrat->getNomContrat());

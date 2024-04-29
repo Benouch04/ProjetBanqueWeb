@@ -45,7 +45,6 @@
 											{{ form_widget(form.situation, {'attr': {'class': 'form-control', 'disabled': true}}) }}
 										</div>
 									</div>
-									<a href="{{ path('app_conseiller') }}" class="btn btn-link">Retour au Dashboard</a>
 								</form>
 							</div>
 						</div>
@@ -86,21 +85,149 @@
 					<div class="col-xl-6">
 						<div class="card mt-2">
 							<div class="card-header bg-primary">
-								<h3 class="text-center text-white font-weight-light my-4">Solde du Client</h3>
+								<h3 class="text-center text-white font-weight-light my-4">Liste des comptes</h3>
 							</div>
-							<div class="card-body"></div>
+
+							<table class="table">
+								<thead>
+									<tr class="text-center">
+										<th>Nom du Compte</th>
+										<th>Solde</th>
+										<th></th>
+										<th>Actions</th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for compteClient in compteClients %}
+										<tr class="text-center">
+											<td>{{ compteClient.compte.NomCompte }}</td>
+											<td>{{ compteClient.solde }}</td>
+											<td></td>
+											<td>
+											{% if is_granted('ROLE_AGENT') %}
+												<form action="{{ path('compte_ope', {'id': compteClient.id}) }}" method="post" style="display: inline;">
+													<button type="submit" class="btn btn-warning">Dépôt/Retrait</button>
+												</form>
+												{% endif %}
+												{% if is_granted('ROLE_CONSEILLER') %}
+												<form action="{{ path('compte_ope', {'id': compteClient.id}) }}" method="post" style="display: inline;">
+													<button type="submit" class="btn btn-warning">Découvert</button>
+												</form>
+												{% endif %}
+												{% if is_granted('ROLE_CONSEILLER') %}
+													|
+													<form action="{{ path('compteClient_delete', {'id': compteClient.id}) }}" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce compte du client ?');" style="display: inline;">
+														<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ compteClient.id) }}">
+														<button type="submit" class="btn btn-danger">Supprimer</button>
+													</form>
+													{% else %}
+												{% endif %}
+											</td>
+										</tr>
+									{% else %}
+										<tr>
+											<td colspan="4">Aucun client associé à un compte trouvé.</td>
+										</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+							{% if compteClients|length > 0 %}
+							<nav aria-label="Page navigation">
+								<ul
+									class="pagination">
+									{# Previous page link #}
+									<li class="page-item {% if currentPageComptes <= 1 %}disabled{% endif %}">
+										<a class="page-link" href="{{ path('client_infos', {'id': client.id, 'pageComptes': currentPageComptes - 1}) }}" aria-label="Previous">
+											<span aria-hidden="true">&laquo;</span>
+										</a>
+									</li>
+
+									{# Page numbers #}
+									{% for i in 1..totalPagesComptes %}
+										<li class="page-item {% if i == currentPageComptes %}active{% endif %}">
+											<a class="page-link" href="{{ path('client_infos', {'id': client.id, 'pageComptes': i}) }}">{{ i }}</a>
+										</li>
+									{% endfor %}
+
+									{# Next page link #}
+									<li class="page-item {% if currentPageComptes >= totalPagesComptes %}disabled{% endif %}">
+										<a class="page-link" href="{{ path('client_infos', {'id': client.id, 'pageComptes': currentPageComptes + 1}) }}" aria-label="Next">
+											<span aria-hidden="true">&raquo;</span>
+										</a>
+									</li>
+								</ul>
+							</nav>
+							{% endif %}
 						</div>
 					</div>
 					<div class="col-xl-6">
 						<div class="card mt-2">
 							<div class="card-header bg-primary">
-								<h3 class="text-center text-white font-weight-light my-4">Dépôt/Retrait sur un compte</h3>
+								<h3 class="text-center text-white font-weight-light my-4">Liste des contrats</h3>
 							</div>
-							<div class="card-body">{{ form_widget(formCompte.compte) }}
-								{{ form_widget(formCompte.typeOp) }}
-								{{ form_widget(formCompte.montant) }}
-								{{ form_widget(formCompte.submit) }}
-							</div>
+							<table class="table">
+								<thead>
+									<tr class="text-center">
+										<th>Nom du Contrat</th>
+										<th>Tarif Mensuel</th>
+										<th></th>
+										<th>Actions</th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for contratClient in contratClients %}
+										<tr class="text-center">
+											<td>{{ contratClient.contrat.nomContrat }}</td>
+											<td>{{ contratClient.tarifMensuel }}</td>
+											<td></td>
+											<td>
+												<form action="{{ path('contratClient_edit', {'id': contratClient.id}) }}" method="post" style="display: inline;">
+													<button type="submit" class="btn btn-warning">Modifier</button>
+												</form>
+												{% if is_granted('ROLE_CONSEILLER') %}
+													|
+													<form action="{{ path('contratClient_delete', {'id': contratClient.id}) }}" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce contrat du client ?');" style="display: inline;">
+														<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ contratClient.id) }}">
+														<button type="submit" class="btn btn-danger">Supprimer</button>
+													</form>
+													{% else %}
+												{% endif %}
+											</td>
+										</tr>
+									{% else %}
+										<tr>
+											<td colspan="4">Aucun client associé à un contrat trouvé.</td>
+										</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+							{% if contratClients|length > 0 %}
+							<nav aria-label="Page navigation">
+								<ul
+									class="pagination">
+									{# Previous page link #}
+									<li class="page-item {% if currentPageContrats <= 1 %}disabled{% endif %}">
+										<a class="page-link" href="{{ path('client_infos', {'id': client.id, 'pageContrats': currentPageContrats - 1}) }}" aria-label="Previous">
+											<span aria-hidden="true">&laquo;</span>
+										</a>
+									</li>
+
+									{# Page numbers #}
+									{% for i in 1..totalPagesContrats %}
+										<li class="page-item {% if i == currentPageContrats %}active{% endif %}">
+											<a class="page-link" href="{{ path('client_infos', {'id': client.id, 'pageContrats': i}) }}">{{ i }}</a>
+										</li>
+									{% endfor %}
+
+									{# Next page link #}
+									<li class="page-item {% if currentPageContrats >= totalPagesContrats %}disabled{% endif %}">
+										<a class="page-link" href="{{ path('client_infos', {'id': client.id, 'pageContrats': currentPageContrats + 1}) }}" aria-label="Next">
+											<span aria-hidden="true">&raquo;</span>
+										</a>
+									</li>
+								</ul>
+							</nav>
+							{% endif %}
 						</div>
 					</div>
 				</div>

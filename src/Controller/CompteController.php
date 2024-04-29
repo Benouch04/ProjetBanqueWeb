@@ -9,12 +9,18 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Compte;
 use App\Entity\Motif;
+use App\Entity\Calendar;
 use App\Entity\Users;
 use App\Entity\CompteClient;
 use App\Form\CompteType;
+use App\Repository\CompteRepository;
 use App\Form\CompteClientType;
 use App\Controller\AccessDeniedException;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
+#[Route('/directeur')]
 class CompteController extends AbstractController
 {
     #[Route('/compte', name: 'app_compte')]
@@ -25,23 +31,26 @@ class CompteController extends AbstractController
         ]);
     }
     #[Route('/compte/ajout', name: 'compte_ajout')]
-    public function ajoutCompte(Request $request, EntityManagerInterface $entityManager)
+    public function ajoutCompte(Request $request, EntityManagerInterface $entityManager, CompteRepository $compteRepository)
     {
         $compte = new Compte();
         $form = $this->createForm(CompteType::class, $compte);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $existingCompte = $compteRepository->findByNomCompte($compte->getNomCompte());
+            if ($existingCompte) {
+                $this->addFlash('danger', 'Un compte avec le même nom existe déjà.');
+                return $this->redirectToRoute('compte_ajout');
+            }
             $entityManager->persist($compte);
-            // Créez et configurez l'entité Motif avec le nomCompte.
+
             $motif = new Motif();
             $motif->setLibelleMotif($compte->getNomCompte());
-            // Vous pouvez également ajouter d'autres propriétés nécessaires à l'entité Motif ici.
-
-            // Persistez l'entité Motif.
             $entityManager->persist($motif);
             $entityManager->flush();
-            // Redirection ou affichage d'un message de succès
+
             return $this->redirectToRoute('app_directeur');
         }
 
@@ -98,50 +107,4 @@ class CompteController extends AbstractController
     {
         return $this->redirectToRoute('app_main');
     }
-    #[Route('/compte/ouverture', name: 'compte_ouverture')]
-    public function ouvrirCompte(Request $request, EntityManagerInterface $entityManager)
-    {
-        $compteClient = new CompteClient();
-        $form = $this->createForm(CompteClientType::class, $compteClient);
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            // Récupérer l'employé (conseiller) actuellement connecté
-            // Cette partie dépend de la manière dont vous gérez l'authentification
-            $conseiller = $this->getUser();
-
-            // Vérifier si l'utilisateur actuel est bien un conseiller
-            if ($conseiller->getRoles() !== 'Conseiller') {
-                // throw new AccessDeniedException('Seuls les conseillers peuvent ouvrir des comptes.');
-            }
-
-            // Assigner le conseiller au compte client (si votre modèle de données le permet)
-            $compteClient->setClient($conseiller);
-
-            // Assigner le client et le compte récupérés du formulaire à l'objet CompteClient
-            // Ces données devraient être soumises via le formulaire CompteClientType
-            $client = $form->get('client')->getData();
-            $compte = $form->get('compte')->getData();
-            $compteClient->setClient($client);
-            $compteClient->setCompte($compte);
-
-            // Gérer les autres propriétés comme dateOuverture, solde initial, etc.
-            $compteClient->setDateOuverture(new \DateTime());
-            $compteClient->setSolde(0);
-
-            $entityManager->persist($compteClient);
-            $entityManager->flush();
-
-            $this->addFlash('success', 'Le compte a été ouvert avec succès.');
-
-            // Rediriger vers une page appropriée
-            return $this->redirectToRoute('quelque_route');
-        }
-
-        return $this->render('main/conseiller.html.twig', [
-            'form' => $form->createView(),
-        ]);
-    }
-
 }

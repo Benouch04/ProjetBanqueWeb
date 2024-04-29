@@ -3,9 +3,7 @@
 {% block title %}Dashboard
 {% endblock %}
 
-
 {% block body %}
-
 	<div id="layoutSidenav_content">
 		<main>
 			{% for message in app.flashes('danger') %}
@@ -26,54 +24,171 @@
 			<div class="container-fluid px-4">
 				<h1 class="mt-4">Dashboard du Directeur</h1>
 				<ol class="breadcrumb mb-4">
-					<li class="breadcrumb-item active">Dashboard</li>
+					<li class="breadcrumb-item active">Statistiques</li>
 				</ol>
 				<div class="row">
 					<div class="col-xl-3 col-md-6">
 						<div class="card bg-primary text-white mb-4">
-							<div class="card-body">Statistique 1</div>
-							<div class="card-footer d-flex align-items-center justify-content-between">
-								<a class="small text-white stretched-link" href="#">Voir les détails</a>
-								<div class="small text-white">
-									<i class="fas fa-angle-right"></i>
+							{% if app.session.get('searchContrat') %}
+								<div class="card-header d-flex align-items-center justify-content-between">
+									Nombre de contrats souscris
 								</div>
-							</div>
+								<div class="card-body">
+									<div class="text-center mb-3">
+										<div class="h3 text-white">{{ app.session.get('nombreContrats') }}</div>
+									</div>
+									<p>Date de début :
+										{{ app.session.get('startDateContrat')|date('d-m-Y') }}</p>
+									<p>Date de fin :
+										{{ app.session.get('endDateContrat')|date('d-m-Y') }}</p>
+									<div class="text-center mt-3">
+										<a href="{{ path('app_directeur_reinit') }}" class="btn btn-light">Réinitialiser</a>
+									</div>
+								</div>
+							{% else %}
+								<div class="card-header d-flex align-items-center justify-content-between">
+									Nombre de contrats souscris
+								</div>
+								<div class="card-body">
+									{{ form_start(formStatContrat, {'action': path('contrat_statistiques'), 'method': 'POST'}) }}
+									<div class="form-group">
+										{{ form_label(formStatContrat.startDateContrat) }}
+										{{ form_widget(formStatContrat.startDateContrat) }}
+									</div>
+									<div class="form-group">
+										{{ form_label(formStatContrat.endDateContrat) }}
+										{{ form_widget(formStatContrat.endDateContrat) }}
+									</div>
+									<div class="text-center mt-3">
+										<div class="form-group">
+											{{ form_widget(formStatContrat.submit) }}
+										</div>
+									</div>
+									{{ form_end(formStatContrat) }}
+								</div>
+							{% endif %}
+
 						</div>
 					</div>
 					<div class="col-xl-3 col-md-6">
 						<div class="card bg-primary text-white mb-4">
-							<div class="card-body">Statistique 2</div>
-							<div class="card-footer d-flex align-items-center justify-content-between">
-								<a class="small text-white stretched-link" href="#">Voir les détails</a>
-								<div class="small text-white">
-									<i class="fas fa-angle-right"></i>
+							{% if app.session.get('searchRdv') %}
+								<div class="card-header d-flex align-items-center justify-content-between">
+									Nombre de rendez-vous pris
 								</div>
-							</div>
+								<div class="card-body">
+									<div class="text-center mb-3">
+										<div class="h3 text-white">{{ app.session.get('nombreRdv') }}</div>
+									</div>
+									<p>Date de début :
+										{{ app.session.get('startDateRdv')|date('d-m-Y') }}</p>
+									<p>Date de fin :
+										{{ app.session.get('endDateRdv')|date('d-m-Y') }}</p>
+									<div class="text-center mt-3">
+										<a href="{{ path('app_directeur_reinit') }}" class="btn btn-light">Réinitialiser</a>
+									</div>
+								</div>
+							{% else %}
+								<div class="card-header d-flex align-items-center justify-content-between">
+									Nombre de rendez-vous pris
+								</div>
+								<div class="card-body">
+									{{ form_start(formStatRdv, {'action': path('rdv_statistiques'), 'method': 'POST'}) }}
+									<div class="form-group">
+										{{ form_label(formStatRdv.startDateRdv) }}
+										{{ form_widget(formStatRdv.startDateRdv) }}
+									</div>
+									<div class="form-group">
+										{{ form_label(formStatRdv.endDateRdv) }}
+										{{ form_widget(formStatRdv.endDateRdv) }}
+									</div>
+									<div class="text-center mt-3">
+										<div class="form-group">
+											{{ form_widget(formStatRdv.submit) }}
+										</div>
+									</div>
+									{{ form_end(formStatRdv) }}
+								</div>
+							{% endif %}
+
 						</div>
 					</div>
 					<div class="col-xl-3 col-md-6">
 						<div class="card bg-primary text-white mb-4">
-							<div class="card-body">Statistique 3</div>
-							<div class="card-footer d-flex align-items-center justify-content-between">
-								<a class="small text-white stretched-link" href="#">Voir les détails</a>
-								<div class="small text-white">
-									<i class="fas fa-angle-right"></i>
+							{% if app.session.get('searchClient') %}
+								<div class="card-header d-flex align-items-center justify-content-between">
+									Nombre total de clients
 								</div>
-							</div>
+								<div class="card-body">
+									<div class="text-center mb-3">
+										<div class="h3 text-white">{{ app.session.get('nombreClient') }}</div>
+									</div>
+									<p>Choix date :
+										{{ app.session.get('dateAjout')|date('d-m-Y') }}</p>
+									<div class="text-center mt-3">
+										<a href="{{ path('app_directeur_reinit') }}" class="btn btn-light">Réinitialiser</a>
+									</div>
+								</div>
+							{% else %}
+								<div class="card-header d-flex align-items-center justify-content-between">
+									Nombre total de clients
+								</div>
+								<div class="card-body">
+									{{ form_start(formStatClient, {'action': path('client_statistiques'), 'method': 'POST'}) }}
+									<div class="form-group">
+										{{ form_label(formStatClient.dateAjout) }}
+										{{ form_widget(formStatClient.dateAjout) }}
+									</div>
+									<div class="text-center mt-3">
+										<div class="form-group">
+											{{ form_widget(formStatClient.submit) }}
+										</div>
+									</div>
+									{{ form_end(formStatClient) }}
+								</div>
+							{% endif %}
 						</div>
 					</div>
 					<div class="col-xl-3 col-md-6">
 						<div class="card bg-primary text-white mb-4">
-							<div class="card-body">Statistique 4</div>
-							<div class="card-footer d-flex align-items-center justify-content-between">
-								<a class="small text-white stretched-link" href="#">Voir les détails</a>
-								<div class="small text-white">
-									<i class="fas fa-angle-right"></i>
+							{% if app.session.get('searchSolde') %}
+								<div class="card-header d-flex align-items-center justify-content-between">
+									Solde total de tous les clients
 								</div>
-							</div>
+								<div class="card-body">
+									<div class="text-center mb-3">
+										<div class="h3 text-white">{{ app.session.get('soldeClient') }} €</div>
+									</div>
+									<p>Choix date :
+										{{ app.session.get('dateOuverture')|date('d-m-Y') }}</p>
+									<div class="text-center mt-3">
+										<a href="{{ path('app_directeur_reinit') }}" class="btn btn-light">Réinitialiser</a>
+									</div>
+								</div>
+							{% else %}
+								<div class="card-header d-flex align-items-center justify-content-between">
+									Solde total de tous les clients
+								</div>
+								<div class="card-body">
+									{{ form_start(formStatSolde, {'action': path('solde_statistiques'), 'method': 'POST'}) }}
+									<div class="form-group">
+										{{ form_label(formStatSolde.dateOuverture) }}
+										{{ form_widget(formStatSolde.dateOuverture) }}
+									</div>
+									<div class="text-center mt-3">
+										<div class="form-group">
+											{{ form_widget(formStatSolde.submit) }}
+										</div>
+									</div>
+									{{ form_end(formStatSolde) }}
+								</div>
+							{% endif %}
 						</div>
 					</div>
 				</div>
+				<ol class="breadcrumb mb-4">
+					<li class="breadcrumb-item active">Fonctionnalités</li>
+				</ol>
 				<div class="row">
 					<div class="col-xl-6">
 						<div class="card mb-4">
@@ -124,6 +239,33 @@
 									{% endfor %}
 								</tbody>
 							</table>
+							{% if users|length > 0 %}
+							<nav aria-label="Page navigation">
+								<ul
+									class="pagination">
+									{# Previous page link #}
+									<li class="page-item {% if currentPageUsers <= 1 %}disabled{% endif %}">
+										<a class="page-link" href="{{ path('app_directeur', {'pageUsers': currentPageUsers - 1}) }}" aria-label="Previous">
+											<span aria-hidden="true">&laquo;</span>
+										</a>
+									</li>
+
+									{# Page numbers #}
+									{% for i in 1..totalPagesUsers %}
+										<li class="page-item {% if i == currentPageUsers %}active{% endif %}">
+											<a class="page-link" href="{{ path('app_directeur', {'pageUsers': i}) }}">{{ i }}</a>
+										</li>
+									{% endfor %}
+
+									{# Next page link #}
+									<li class="page-item {% if currentPageUsers >= totalPagesUsers %}disabled{% endif %}">
+										<a class="page-link" href="{{ path('app_directeur', {'pageUsers': currentPageUsers + 1}) }}" aria-label="Next">
+											<span aria-hidden="true">&raquo;</span>
+										</a>
+									</li>
+								</ul>
+							</nav>
+							{% endif %}
 						</div>
 					</div>
 					<div class="col-xl-6">
@@ -131,8 +273,8 @@
 							<div class="card-header">
 								<div class="d-flex justify-content-between align-items-center">
 									<div>
-										<i class="fa-solid fa-solid fa-user me-1"></i>
-										Liste des pièces justificatifs
+										<i class="fa-solid fa-solid fa-book me-1"></i>
+										Pièces justificatifs
 									</div>
 									<form action="{{ path('motif_list') }}" method="post" style="display: inline;">
 										<button type="submit" class="btn btn-info">Gérer par Compte/Contrat</button>
@@ -176,6 +318,33 @@
 									{% endfor %}
 								</tbody>
 							</table>
+							{% if pieces|length > 0 %}
+							<nav aria-label="Page navigation">
+								<ul
+									class="pagination">
+									{# Previous page link #}
+									<li class="page-item {% if currentPagePJ <= 1 %}disabled{% endif %}">
+										<a class="page-link" href="{{ path('app_directeur', {'pagePJ': currentPagePJ - 1}) }}" aria-label="Previous">
+											<span aria-hidden="true">&laquo;</span>
+										</a>
+									</li>
+
+									{# Page numbers #}
+									{% for i in 1..totalPagesPJ %}
+										<li class="page-item {% if i == currentPagePJ %}active{% endif %}">
+											<a class="page-link" href="{{ path('app_directeur', {'pagePJ': i}) }}">{{ i }}</a>
+										</li>
+									{% endfor %}
+
+									{# Next page link #}
+									<li class="page-item {% if currentPagePJ >= totalPagesPJ %}disabled{% endif %}">
+										<a class="page-link" href="{{ path('app_directeur', {'pagePJ': currentPagePJ + 1}) }}" aria-label="Next">
+											<span aria-hidden="true">&raquo;</span>
+										</a>
+									</li>
+								</ul>
+							</nav>
+							{% endif %}
 						</div>
 					</div>
 					<div class="col-xl-6">
@@ -224,6 +393,33 @@
 									{% endfor %}
 								</tbody>
 							</table>
+							{% if contrats|length > 0 %}
+							<nav aria-label="Page navigation">
+								<ul
+									class="pagination">
+									{# Previous page link #}
+									<li class="page-item {% if currentPageContrats <= 1 %}disabled{% endif %}">
+										<a class="page-link" href="{{ path('app_directeur', {'pageContrats': currentPageContrats - 1}) }}" aria-label="Previous">
+											<span aria-hidden="true">&laquo;</span>
+										</a>
+									</li>
+
+									{# Page numbers #}
+									{% for i in 1..totalPagesContrats %}
+										<li class="page-item {% if i == currentPageContrats %}active{% endif %}">
+											<a class="page-link" href="{{ path('app_directeur', {'pageContrats': i}) }}">{{ i }}</a>
+										</li>
+									{% endfor %}
+
+									{# Next page link #}
+									<li class="page-item {% if currentPageContrats >= totalPagesContrats %}disabled{% endif %}">
+										<a class="page-link" href="{{ path('app_directeur', {'pageContrats': currentPageContrats + 1}) }}" aria-label="Next">
+											<span aria-hidden="true">&raquo;</span>
+										</a>
+									</li>
+								</ul>
+							</nav>
+							{% endif %}
 						</div>
 					</div>
 					<div class="col-xl-6">
@@ -231,7 +427,7 @@
 							<div class="card-header">
 								<div class="d-flex justify-content-between align-items-center">
 									<div>
-										<i class="fa-solid fa-solid fa-user me-1"></i>
+										<i class="fa-solid fa-solid fa-vault me-1"></i>
 										Comptes
 									</div>
 									<form action="{{ path('compte_ajout') }}" method="post">
@@ -274,6 +470,33 @@
 									{% endfor %}
 								</tbody>
 							</table>
+							{% if comptes|length > 0 %}
+							<nav aria-label="Page navigation">
+								<ul
+									class="pagination">
+									{# Previous page link #}
+									<li class="page-item {% if currentPageComptes <= 1 %}disabled{% endif %}">
+										<a class="page-link" href="{{ path('app_directeur', {'pageComptes': currentPageComptes - 1}) }}" aria-label="Previous">
+											<span aria-hidden="true">&laquo;</span>
+										</a>
+									</li>
+
+									{# Page numbers #}
+									{% for i in 1..totalPagesComptes %}
+										<li class="page-item {% if i == currentPageComptes %}active{% endif %}">
+											<a class="page-link" href="{{ path('app_directeur', {'pageComptes': i}) }}">{{ i }}</a>
+										</li>
+									{% endfor %}
+
+									{# Next page link #}
+									<li class="page-item {% if currentPageComptes >= totalPagesComptes %}disabled{% endif %}">
+										<a class="page-link" href="{{ path('app_directeur', {'pageComptes': currentPageComptes + 1}) }}" aria-label="Next">
+											<span aria-hidden="true">&raquo;</span>
+										</a>
+									</li>
+								</ul>
+							</nav>
+							{% endif %}
 						</div>
 					</div>
 				</div>

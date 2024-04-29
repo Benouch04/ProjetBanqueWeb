@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\ClientRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ClientRepository::class)]
@@ -42,11 +43,18 @@ class Client
     #[ORM\OneToMany(mappedBy: 'clients', targetEntity: Calendar::class)]
     private Collection $calendars;
 
+    #[ORM\OneToMany(mappedBy: 'client', targetEntity: ContratClient::class)]
+    private Collection $contratClients;
+
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $dateAjout = null;
+
     public function __construct()
     {
         $this->ClientOpe = new ArrayCollection();
         $this->compteClients = new ArrayCollection();
         $this->calendars = new ArrayCollection();
+        $this->contratClients = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -220,4 +228,53 @@ class Client
 
         return $this;
     }
+
+    public function __toString()
+    {
+        return $this->nomClient; // ou toute autre propriété qui représente un objet Client en tant que chaîne
+    }
+
+    /**
+     * @return Collection<int, ContratClient>
+     */
+    public function getContratClients(): Collection
+    {
+        return $this->contratClients;
+    }
+
+    public function addContratClient(ContratClient $contratClient): static
+    {
+        if (!$this->contratClients->contains($contratClient)) {
+            $this->contratClients->add($contratClient);
+            $contratClient->setClient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeContratClient(ContratClient $contratClient): static
+    {
+        if ($this->contratClients->removeElement($contratClient)) {
+            // set the owning side to null (unless already changed)
+            if ($contratClient->getClient() === $this) {
+                $contratClient->setClient(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getDateAjout(): ?\DateTimeInterface
+    {
+        return $this->dateAjout;
+    }
+
+    public function setDateAjout(?\DateTimeInterface $dateAjout): static
+    {
+        $this->dateAjout = $dateAjout;
+
+        return $this;
+    }
+
+    
 }

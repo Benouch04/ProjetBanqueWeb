@@ -16,12 +16,13 @@
 					<div class="col-xl-8">
 						<div class="card mb-4">
 							<div class="card-header bg-primary">
+								<a href="{{ path('client_infos', {'id': client.id}) }}" class="text-white" style="float: left; margin-right: 10px;">
+									<i class="fas fa-arrow-left"></i>
+									Retour
+								</a>
 								<h3 class="text-center text-white font-weight-light my-4">Création d'un rendez vous</h3>
 							</div>
-
-
 							<div class="card-body">
-
 								{{ form_start(form) }}
 								{{ form_row(form.clientName) }}
 								{{ form_row(form.conseillerName) }}
@@ -30,16 +31,11 @@
 								{{ form_row(form.motif) }}
 								{{ form_row(form.start) }}
 								{{ form_row(form.end) }}
-
 								{{ form_end(form) }}
-
-								<a href="{{ path('calendar_index') }}">back to list</a>
 							</div>
 						</div>
-
 					</div>
 				</div>
-
 			</div>
 		</main>
 	</div>

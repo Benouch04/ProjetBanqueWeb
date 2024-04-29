@@ -21,6 +21,16 @@ class CompteClientRepository extends ServiceEntityRepository
         parent::__construct($registry, CompteClient::class);
     }
 
+    public function findTotalSoldeAtDate(\DateTimeInterface $date): float
+    {
+        $qb = $this->createQueryBuilder('cc')
+            ->select('SUM(cc.solde) as totalSolde')
+            ->where('cc.dateOuverture <= :date')
+            ->setParameter('date', $date)
+            ->getQuery();
+
+        return (float) $qb->getSingleScalarResult();
+    }
 //    /**
 //     * @return CompteClient[] Returns an array of CompteClient objects
 //     */

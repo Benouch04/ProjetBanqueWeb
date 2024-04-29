@@ -21,7 +21,15 @@ class CompteRepository extends ServiceEntityRepository
         parent::__construct($registry, Compte::class);
     }
 
-//    /**
+    public function findByNomCompte($nomCompte)
+    {
+        return $this->createQueryBuilder('c')
+            ->where('c.NomCompte = :nom')
+            ->setParameter('nom', $nomCompte)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+    //    /**
 //     * @return Compte[] Returns an array of Compte objects
 //     */
 //    public function findByExampleField($value): array
@@ -36,7 +44,7 @@ class CompteRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Compte
+    //    public function findOneBySomeField($value): ?Compte
 //    {
 //        return $this->createQueryBuilder('c')
 //            ->andWhere('c.exampleField = :val')

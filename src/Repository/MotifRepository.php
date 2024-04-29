@@ -22,33 +22,34 @@ class MotifRepository extends ServiceEntityRepository
     }
 
     public function findAllIncludingAutre()
-{
-    // Récupérer tous les motifs existants
-    $motifs = $this->findAll();
+    {
+        // Récupérer tous les motifs existants
+        $motifs = $this->findAll();
 
-    // Vérifier si 'Autre' est déjà dans la base de données
-    $autreExists = false;
-    foreach ($motifs as $motif) {
-        if ($motif->getLibelleMotif() === 'Autre') {
-            $autreExists = true;
-            break;
+        // Vérifier si 'Autre' est déjà dans la base de données
+        $autreExists = false;
+        foreach ($motifs as $motif) {
+            if ($motif->getLibelleMotif() === 'Autre') {
+                $autreExists = true;
+                break;
+            }
         }
-    }
 
-    // Ajouter 'Autre' si nécessaire
-    if (!$autreExists) {
-        $autre = new Motif();
-        // Assurez-vous d'assigner les propriétés nécessaires à l'entité 'Autre'
-        $autre->setLibelleMotif('Autre');
-        // Assurez-vous que l'ID que vous assignez ici ne se heurte pas aux IDs existants
-        // Vous pourriez vouloir définir cet ID à une valeur qui ne serait jamais un ID valide autrement
-      // Par exemple, en utilisant un nombre négatif
-        $motifs[] = $autre;
-    }
+        // Ajouter 'Autre' si nécessaire
+        if (!$autreExists) {
+            $autre = new Motif();
+            $autre->setId(-1);
+            // Assurez-vous d'assigner les propriétés nécessaires à l'entité 'Autre'
+            $autre->setLibelleMotif('Autre');
+            // Assurez-vous que l'ID que vous assignez ici ne se heurte pas aux IDs existants
+            // Vous pourriez vouloir définir cet ID à une valeur qui ne serait jamais un ID valide autrement
+            // Par exemple, en utilisant un nombre négatif
+            $motifs[] = $autre;
+        }
 
-    return $motifs;
-}
-//    /**
+        return $motifs;
+    }
+    //    /**
 //     * @return Motif[] Returns an array of Motif objects
 //     */
 //    public function findByExampleField($value): array
@@ -63,7 +64,7 @@ class MotifRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?Motif
+    //    public function findOneBySomeField($value): ?Motif
 //    {
 //        return $this->createQueryBuilder('m')
 //            ->andWhere('m.exampleField = :val')

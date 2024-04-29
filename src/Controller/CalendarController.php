@@ -6,12 +6,17 @@ use App\Entity\Calendar;
 use App\Entity\Client;
 use App\Entity\Compte;
 use App\Entity\Contrat;
+use App\Entity\ContratClient;
 use App\Entity\Motif;
+use App\Entity\CompteClient;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use App\Form\CalendarType;
+use App\Form\CompteClientType;
+use App\Form\ContratClientType;
+use App\Form\StatistiqueRdvType;
 use App\Repository\CalendarRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,6 +24,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 #[Route("/calendar")]
 class CalendarController extends AbstractController
@@ -51,11 +57,9 @@ class CalendarController extends AbstractController
     #[Route("/new/{clientId}", name: "calendar_new", methods: ["GET", "POST"])]
     public function new(Request $request, EntityManagerInterface $entityManager, $clientId = null): Response
     {
-        $calendar = new Calendar();
-
-        // Récupérez les noms de contrats et de comptes ici. Exemple fictif :
         $nomContrats = $entityManager->getRepository(Contrat::class)->findAll();
         $nomComptes = $entityManager->getRepository(Compte::class)->findAll();
+        $client = $entityManager->getRepository(Client::class)->findAll();
 
         // Récupérez le client et le conseiller en utilisant les paramètres passés
         $client = $clientId ? $entityManager->getRepository(Client::class)->find($clientId) : null;
@@ -63,6 +67,7 @@ class CalendarController extends AbstractController
         // Récupérez le conseiller associé au client (remplacez getParent par la méthode appropriée)
         $conseiller = $client ? $client->getParent() : null;
 
+        $calendar = new Calendar();
         if ($client && $conseiller) {
             $calendar->setClients($client);
             $calendar->setUsers($conseiller);
@@ -77,7 +82,7 @@ class CalendarController extends AbstractController
 
         ]);
 
-        //Affiche la valeur Autre dans la liste déoulante des motifs
+        //Affiche la valeur Autre dans la liste déroulante des motifs
         $motifRepository = $entityManager->getRepository(Motif::class);
         $autreMotif = $motifRepository->findOneBy(['libelleMotif' => 'Autre']);
 
@@ -123,33 +128,76 @@ class CalendarController extends AbstractController
             return $this->redirectToRoute('calendar_show', ['id' => $calendar->getId()]);
         }
 
+
         return $this->render('calendar/new.html.twig', [
             'calendar' => $calendar,
             'form' => $form->createView(),
+            'client' => $client,
         ]);
     }
 
     #[Route("/{id}", name: "calendar_show", methods: ["GET"])]
-    public function show(int $id, EntityManagerInterface $entityManager): Response
+    public function show(int $id, EntityManagerInterface $entityManager, Request $request, SessionInterface $session): Response
     {
         $calendar = $entityManager->getRepository(Calendar::class)->find($id);
-
         if (!$calendar) {
             throw new NotFoundHttpException('No calendar found for id ' . $id);
         }
+       
+        $client = $calendar->getClients(); // Assurez-vous que c'est la bonne méthode pour obtenir le client.
+        $libelleMotif = $calendar->getMotif() ? $calendar->getMotif()->getLibelleMotif() : null;
 
-        $motif = $calendar->getMotif();
-        if ($motif) {
-            $piecesJustifs = $motif->getMotifPj();
-        } else {
-            $piecesJustifs = []; // ou bien une ArrayCollection si vous préférez
+         //Partie compte
+        $compteExistant = $entityManager->getRepository(Compte::class)->findOneBy(['NomCompte' => $libelleMotif]);
+
+        // Assurez-vous que cette recherche correspond à la logique de votre base de données et à vos entités
+        $compteClientExistant = null;
+        if ($compteExistant) {
+            $compteClientExistant = $entityManager->getRepository(CompteClient::class)->findOneBy([
+                'compte' => $compteExistant,
+                'client' => $client
+            ]);
         }
 
+        $compteCreationStatus = $compteClientExistant ? 'existant' : 'inconnu';
+
+        $piecesJustifs = $calendar->getMotif() ? $calendar->getMotif()->getMotifPj() : [];
+
+        $compteClient = new CompteClient();
+           
+        $formCompte = $this->createForm(CompteClientType::class, $compteClient);
+        
+        //Partie Contrat
+        $contratExistant = $entityManager->getRepository(Contrat::class)->findOneBy(['nomContrat' => $libelleMotif]);
+
+        // Assurez-vous que cette recherche correspond à la logique de votre base de données et à vos entités
+        $contratClientExistant = null;
+        if ($contratExistant) {
+            $contratClientExistant = $entityManager->getRepository(ContratClient::class)->findOneBy([
+                'contrat' => $contratExistant,
+                'client' => $client
+            ]);
+        }
+
+        $contratCreationStatus = $contratClientExistant ? 'existant' : 'inconnu';
+
+        $piecesJustifs = $calendar->getMotif() ? $calendar->getMotif()->getMotifPj() : [];
+
+        $contratClient = new ContratClient();
+           
+        $formContrat = $this->createForm(ContratClientType::class, $contratClient);
+
+
         return $this->render('calendar/show.html.twig', [
+            'formCompte' => $formCompte->createView(),
+            'formContrat' => $formContrat->createView(),
             'calendar' => $calendar,
             'piecesJustifs' => $piecesJustifs,
+            'compteCreationStatus' => $compteCreationStatus,
+            'contratCreationStatus' => $contratCreationStatus
         ]);
     }
+
 
     #[Route("/{id}/edit", name: "calendar_edit", methods: ["GET", "POST"])]
     public function edit(Request $request, int $id, EntityManagerInterface $entityManager): Response
@@ -222,6 +270,30 @@ class CalendarController extends AbstractController
     {
         $this->addFlash('error', 'La création  a été rejeté avec succès.');
         return $this->redirectToRoute('calendar_index');
+    }
+
+    #[Route('/rdv/statistiques', name: 'rdv_statistiques')]
+    public function statistiquesRDV(Request $request, CalendarRepository $calendarRepository, SessionInterface $session): Response
+    {
+
+        $formStatRdv = $this->createForm(StatistiqueRdvType::class);
+        $formStatRdv->handleRequest($request);
+
+        if ($formStatRdv->isSubmitted() && $formStatRdv->isValid()) {
+            $data = $formStatRdv->getData();
+            $nombreRdv = $calendarRepository->countRdvByDate($data['startDateRdv'], $data['endDateRdv']);
+
+            $session->set('searchRdv', true);
+            $session->set('nombreRdv', $nombreRdv);
+            $session->set('startDateRdv', $data['startDateRdv']);
+            $session->set('endDateRdv', $data['endDateRdv']);
+
+            return $this->redirectToRoute('app_directeur');
+        }
+
+        return $this->render('calendar/statistiques.html.twig', [
+            'formStatRdv' => $formStatRdv->createView(),
+        ]);
     }
 }
 

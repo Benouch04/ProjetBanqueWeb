@@ -8,29 +8,34 @@ use App\Entity\PieceJustif;
 use App\Entity\Users;
 use App\Entity\Calendar;
 use App\Form\PieceJustifType;
-use App\Repository\ContratRepository;
+use App\Repository\PieceJustifRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-
+#[Route('/directeur')]
 class PieceJustifController extends AbstractController
 {
     #[Route('/piece/ajout', name: 'ajout_piece')]
-    public function ajoutPiece(Request $request, EntityManagerInterface $entityManager)
+    public function ajoutPiece(Request $request, EntityManagerInterface $entityManager, PieceJustifRepository $pieceJustifRepository)
     {
         $piece = new PieceJustif();
         $form = $this->createForm(PieceJustifType::class, $piece);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $existingPiece = $pieceJustifRepository->findByNomPieceJustif($piece->getNomPieceJustif());
+            if ($existingPiece) {
+                $this->addFlash('danger', 'Une pièce justificative avec le même nom existe déjà.');
+                return $this->redirectToRoute('ajout_piece');
+            }
             $entityManager->persist($piece);
             $entityManager->flush();
 
-            // Redirection ou affichage d'un message de succès
-            return $this->redirectToRoute('main');
+            return $this->redirectToRoute('app_directeur');
         }
 
         return $this->render('piece_justif/index.html.twig', [

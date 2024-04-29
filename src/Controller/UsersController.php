@@ -17,7 +17,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
 
-
+#[Route('/directeur')]
 class UsersController extends AbstractController
 {
     #[Route('/employe/inscription', name: 'user_ajout')]
@@ -46,21 +46,15 @@ class UsersController extends AbstractController
                 case 'Directeur':
                     $user->setRoles(['ROLE_DIRECTEUR']);
                     break;
-                // Ajoutez d'autres cas si nécessaire
                 default:
-                    $user->setRoles(['ROLE_USER']); // Un rôle par défaut
+                    $user->setRoles(['ROLE_USER']); 
                     break;
             }
     
             $entityManager->persist($user);
             $entityManager->flush();
-            // do anything else you need here, like send an email
     
-            return $userAuthenticator->authenticateUser(
-                $user,
-                $authenticator,
-                $request
-            );
+            return $this->redirectToRoute('app_directeur');
         }
     
         return $this->render('registration/register.html.twig', [
@@ -121,36 +115,4 @@ class UsersController extends AbstractController
     {
         return $this->redirectToRoute('app_main');
     }
-    /*
-        #[Route("/user/create", name: "user_create", methods: "POST")]
-        public function create(Request $request, EntityManagerInterface $entityManager): Response
-        {
-            $type = $request->request->get('type'); 
-            error_log(print_r($type, true));
-            dd($type);// Ici, nous lisons le type du formulaire
-            if ($type === 'Directeur') {
-                $users = new Directeur();
-            } elseif ($type === 'Conseiller') {
-                $users = new Conseiller();
-            } elseif ($type === 'Agent') {
-                $users = new Agent();
-            } else {
-                
-                // Gérer le cas où aucun type valide n'est sélectionné
-                throw new \Exception('Type d\'employé invalide.');
-            }
-        
-            // Maintenant, définissez les propriétés sur l'objet du type correct.
-            $users->setLastname($request->request->get('username'));
-            $users->setFirstname($request->request->get('prenom'));
-            $users->setUsername($request->request->get('login'));
-            $users->setPassword($request->request->get('motDePasse')); // Pensez à hasher le mot de passe
-        
-            // Enregistrer l'entité dans la base de données
-            $entityManager->persist($users);
-            $entityManager->flush();
-        
-            // Rediriger l'utilisateur ou afficher un message de succès
-            return new Response('Employé ajouté avec succès');
-        }*/
 }

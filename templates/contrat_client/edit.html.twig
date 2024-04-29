@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajout d'une pièce justificative
+{% endblock %}
+
+{% block body %}
+	<div id="layoutSidenav_content" class="justify-content-center bg-light">
+		{% for message in app.flashes('success') %}
+			<div class="alert alert-success" role="alert">
+				{{ message }}
+			</div>
+		{% endfor %}
+		<main>
+
+			{% for message in app.flashes('danger') %}
+				<div class="alert alert-danger" role="alert">
+					{{ message }}
+				</div>
+			{% endfor %}
+
+			<div class="container-fluid px-4">
+				<div class="row justify-content-center">
+					<div class="col-xl-10">
+						<div class="card mb-4">
+							<div class="card-header bg-primary">
+								<h3 class="text-center text-white font-weight-light my-4">Modification du contrat</h3>
+							</div>
+							<div class="card-body">
+								{{ form_start(formContrat) }}
+
+								<div class="card-body">
+									<h3 class="text-center">Modification du tarif mensuel</h3>
+
+									<div class="form-group">
+										{{ form_label(formContrat.tarifMensuel, 'Tarif Mensuel (€)') }}
+										{{ form_widget(formContrat.tarifMensuel, {'attr': {'class': 'form-control'}}) }}
+									</div>
+
+									<div class="form-group">
+										<button type="submit" class="btn btn-success btn-lg mx-auto d-block mt-4" style="width: fit-content;">
+											Accepter
+										</button>
+									</div>
+								</div>
+								{{ form_end(formContrat) }}								
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</main>
+	</div>
+{% endblock %}
