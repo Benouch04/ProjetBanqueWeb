@@ -73,12 +73,17 @@
 
 								</tbody>
 							</table>
-							<div></div>
-							<a href="{{ path('calendar_index') }}">back to list</a>
+							<div>
+								<form action="{{ path('calendar_edit', {'id': calendar.id}) }}" method="post">
+									<div class="text-center">
+										<button type="submit" class="btn btn-warning btn-lg mx-auto d-block mb-3">Modifier</button>
+									</div>
+								</form>
+							</div>
+							<!--<a href="{{ path('calendar_index') }}">back to list</a>-->
 
-							<a href="{{ path('calendar_edit', {'id': calendar.id}) }}">edit</a>
+							<!--<a href="{{ path('calendar_edit', {'id': calendar.id}) }}">edit</a>-->
 
-							{{ include('calendar/_delete_form.html.twig') }}
 						</div>
 					</div>
 

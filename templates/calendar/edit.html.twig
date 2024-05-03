@@ -13,17 +13,19 @@
 							<div class="card-header">
 								<h3 class="text-center">Modifier le rendez vous</h3>
 							</div>
-
-							{{ include('calendar/_form.html.twig', {'button_label': 'Update'}) }}
-
-							<a href="{{ path('calendar_index') }}">back to list</a>
-
-							{{ include('calendar/_delete_form.html.twig') }}
+							{{ form_start(form) }}
+							{{ form_row(form.clientName) }}
+							{{ form_row(form.conseillerName) }}
+							{{ form_row(form.title) }}
+							{{ form_row(form.start)}}
+							{{ form_row(form.end)}}
+							{{ form_row(form.all_day)}}
+							{{ form_row(form.background_color)}}
+							{{ form_row(form.submit)}}
+							{{ form_end(form) }}
 						</div>
-
 					</div>
 				</div>
-
 			</div>
 		</main>
 	</div>

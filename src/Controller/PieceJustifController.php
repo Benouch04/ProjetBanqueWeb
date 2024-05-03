@@ -82,7 +82,13 @@ class PieceJustifController extends AbstractController
     #[Route('/piece/list', name: 'piece_list')]
     public function listPieces(EntityManagerInterface $entityManager): Response
     {
-        return $this->redirectToRoute('app_directeur');
+        if ($this->isGranted('ROLE_AGENT')){
+            return $this->redirectToRoute('app_agent');
+        } elseif ($this->isGranted('ROLE_CONSEILLER')){
+            return $this->redirectToRoute('app_conseiller');
+        } else {
+            return $this->redirectToRoute('app_directeur');
+        }     
     }
     #[Route("/choix-pj/{id}", name: "choixPJ")]
     public function choixPJ(Request $request, EntityManagerInterface $entityManager, int $id): Response

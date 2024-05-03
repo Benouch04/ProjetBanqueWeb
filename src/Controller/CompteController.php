@@ -94,6 +94,12 @@ class CompteController extends AbstractController
     #[Route('/compte/list', name: 'compte_list')]
     public function listCompte(EntityManagerInterface $entityManager): Response
     {
-        return $this->redirectToRoute('app_directeur');
+        if ($this->isGranted('ROLE_AGENT')){
+            return $this->redirectToRoute('app_agent');
+        } elseif ($this->isGranted('ROLE_CONSEILLER')){
+            return $this->redirectToRoute('app_conseiller');
+        } else {
+            return $this->redirectToRoute('app_directeur');
+        }     
     }
 }

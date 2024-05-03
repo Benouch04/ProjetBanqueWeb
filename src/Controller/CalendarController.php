@@ -6,6 +6,7 @@ use App\Entity\Calendar;
 use App\Entity\Client;
 use App\Entity\Compte;
 use App\Entity\Contrat;
+use App\Entity\Users;
 use App\Entity\ContratClient;
 use App\Entity\Motif;
 use App\Entity\CompteClient;
@@ -29,8 +30,8 @@ class CalendarController extends AbstractController
     #[Route("/", name: "calendar_index", methods: ["GET"])]
     public function index(EntityManagerInterface $entityManager, Request $request): Response
     {
-        $page = $request->query->getInt('page', 1); 
-        $maxResults = 9; 
+        $page = $request->query->getInt('page', 1);
+        $maxResults = 9;
 
         $firstResult = ($page - 1) * $maxResults;
 
@@ -68,8 +69,8 @@ class CalendarController extends AbstractController
         $form = $this->createForm(CalendarType::class, $calendar, [
             'client_name' => $client ? $client->getFullName() : '',
             'conseiller_name' => $conseiller ? $conseiller->getFullName() : '',
-            'nomContrat' => $nomContrats, 
-            'nomCompte' => $nomComptes, 
+            'nomContrat' => $nomContrats,
+            'nomCompte' => $nomComptes,
 
         ]);
 
@@ -130,11 +131,11 @@ class CalendarController extends AbstractController
         $calendar = $entityManager->getRepository(Calendar::class)->find($id);
         if (!$calendar) {
             $this->addFlash('error', 'Le calendrier avec cet id existe pas :' . $id);
-        }    
-        $client = $calendar->getClients(); 
+        }
+        $client = $calendar->getClients();
         $libelleMotif = $calendar->getMotif() ? $calendar->getMotif()->getLibelleMotif() : null;
 
-         //Partie compte
+        //Partie compte
         $compteExistant = $entityManager->getRepository(Compte::class)->findOneBy(['NomCompte' => $libelleMotif]);
 
         $compteClientExistant = null;
@@ -150,9 +151,9 @@ class CalendarController extends AbstractController
         $piecesJustifs = $calendar->getMotif() ? $calendar->getMotif()->getMotifPj() : [];
 
         $compteClient = new CompteClient();
-           
+
         $formCompte = $this->createForm(CompteClientType::class, $compteClient);
-        
+
         //Partie Contrat
         $contratExistant = $entityManager->getRepository(Contrat::class)->findOneBy(['nomContrat' => $libelleMotif]);
 
@@ -169,7 +170,7 @@ class CalendarController extends AbstractController
         $piecesJustifs = $calendar->getMotif() ? $calendar->getMotif()->getMotifPj() : [];
 
         $contratClient = new ContratClient();
-           
+
         $formContrat = $this->createForm(ContratClientType::class, $contratClient);
 
         return $this->render('calendar/show.html.twig', [
@@ -178,7 +179,8 @@ class CalendarController extends AbstractController
             'calendar' => $calendar,
             'piecesJustifs' => $piecesJustifs,
             'compteCreationStatus' => $compteCreationStatus,
-            'contratCreationStatus' => $contratCreationStatus
+            'contratCreationStatus' => $contratCreationStatus, 
+            
         ]);
     }
 
@@ -193,12 +195,14 @@ class CalendarController extends AbstractController
         }
 
         $form = $this->createForm(CalendarType::class, $calendar);
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush(); 
 
-            return $this->redirectToRoute('calendar_index');
+            $entityManager->flush();
+            $this->addFlash('success', 'Le rendez vous a été mis à jour');
+            return $this->redirectToRoute('calendar_show', ['id' => $id]);
         }
 
         return $this->render('calendar/edit.html.twig', [

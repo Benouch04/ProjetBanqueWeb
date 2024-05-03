@@ -40,6 +40,11 @@ class MotifRepository extends ServiceEntityRepository
             $motifs[] = $autre;
         }
 
+        // Tri des motifs par ordre alphabétique du libellé
+        usort($motifs, function ($a, $b) {
+            return strcmp($a->getLibelleMotif(), $b->getLibelleMotif());
+        });
+
         return $motifs;
     }
     //    /**

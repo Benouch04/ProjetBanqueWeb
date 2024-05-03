@@ -135,7 +135,13 @@ class ClientController extends AbstractController
     #[Route('/client/list', name: 'client_list')]
     public function listClients(EntityManagerInterface $entityManager): Response
     {
-        return $this->redirectToRoute('app_conseiller');
+        if ($this->isGranted('ROLE_AGENT')){
+            return $this->redirectToRoute('app_agent');
+        } elseif ($this->isGranted('ROLE_CONSEILLER')){
+            return $this->redirectToRoute('app_conseiller');
+        } else {
+            return $this->redirectToRoute('app_directeur');
+        }     
     }
 
 
