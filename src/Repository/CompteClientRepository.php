@@ -25,7 +25,7 @@ class CompteClientRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('cc')
             ->select('SUM(cc.solde) as totalSolde')
-            ->where('cc.dateOuverture <= :date')
+            ->where('cc.dateOuverture >= :date')
             ->setParameter('date', $date)
             ->getQuery();
 
