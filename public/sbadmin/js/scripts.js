@@ -64,4 +64,4 @@ window.addEventListener('load', function() {
     
     calendar.render();
 });
-  
+

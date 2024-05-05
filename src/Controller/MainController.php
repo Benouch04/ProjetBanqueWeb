@@ -19,6 +19,7 @@ use App\Entity\Compte;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 
 class MainController extends AbstractController
 {
@@ -203,7 +204,7 @@ class MainController extends AbstractController
         ]);
     }
 
-    #[Route('/conseiller/{id}/planning', name: 'conseiller_planning')]
+    #[Route('/planning/conseiller/{id}', name: 'conseiller_planning')]
     public function planningConseiller($id, EntityManagerInterface $entityManager): Response
     {
         $conseiller = $entityManager->getRepository(Users::class)->find($id);

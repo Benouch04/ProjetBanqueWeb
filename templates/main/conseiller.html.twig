@@ -59,6 +59,7 @@
 										<th>ID</th>
 										<th>Nom</th>
 										<th>Prénom</th>
+										<th>Date Naissance</th>
 										<th></th>
 										<th>Actions</th>
 									</tr>
@@ -69,6 +70,7 @@
 											<td>{{ client.id }}</td>
 											<td>{{ client.nomClient }}</td>
 											<td>{{ client.prenomClient }}</td>
+											<td>{{ client.dateNaissance|date('d-m-Y') }}</td>
 											<td></td>
 											<td>
 												<form action="{{ path('client_infos', {'id': client.id}) }}" method="post" style="display: inline;">

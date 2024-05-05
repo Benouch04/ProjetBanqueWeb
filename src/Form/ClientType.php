@@ -6,6 +6,7 @@ use App\Entity\Client;
 use App\Entity\Users;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\AbstractType;
@@ -43,6 +44,14 @@ class ClientType extends AbstractType
                 'constraints' => [
                     new Assert\Length(['min' => 2, 'max' => 50])
                 ]
+            ])
+            ->add('dateNaissance', DateType::class, [
+                'widget' => 'single_text',
+                'attr' => [
+                    'class' => 'form-control mb-3 date-picker',
+                    'placeholder' => 'Date de naissance'
+                ],
+                'label' => 'Date de naissance',
             ])
             ->add('adresseClient', TextType::class, [
                 'attr' => [

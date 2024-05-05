@@ -116,14 +116,14 @@ class ClientController extends AbstractController
 
         if ($searchForm->isSubmitted() && $searchForm->isValid()) {
             $query = $searchForm->getData()['query'];
-
+            
             $client = $entityManager->getRepository(Client::class)->findOneBy(['nomClient' => $query]);
 
             if ($client) {
                 return $this->redirectToRoute('client_infos', ['id' => $client->getId()]);
             } else {
                 $this->addFlash(
-                    'danger',
+                    'danger', 
                     'Aucun client trouvé avec le nom << ' . $query . ' >>'
                 );
                 return $this->redirectToRoute('client_list');
@@ -137,13 +137,13 @@ class ClientController extends AbstractController
     #[Route('/client/list', name: 'client_list')]
     public function listClients(EntityManagerInterface $entityManager): Response
     {
-        if ($this->isGranted('ROLE_AGENT')) {
+        if ($this->isGranted('ROLE_AGENT')){
             return $this->redirectToRoute('app_agent');
-        } elseif ($this->isGranted('ROLE_CONSEILLER')) {
+        } elseif ($this->isGranted('ROLE_CONSEILLER')){
             return $this->redirectToRoute('app_conseiller');
         } else {
             return $this->redirectToRoute('app_directeur');
-        }
+        }     
     }
 
 
@@ -162,25 +162,25 @@ class ClientController extends AbstractController
         $compteClients = $client->getCompteClients();
         $contratClients = $client->getContratClients();
 
-        //Pagination pour les contrats
-        $pageContrats = $request->query->getInt('pageContrats', 1);
-        $maxResults = 3;
-        $firstResult = ($pageContrats - 1) * $maxResults;
-        $criteriaContrats = ['client' => $id];
-        $contrats = $entityManager->getRepository(ContratClient::class)
-            ->findBy($criteriaContrats, null, $maxResults, $firstResult);
-        $totalContrats = count($entityManager->getRepository(ContratClient::class)->findBy($criteriaContrats));
-        $totalPagesContrats = ceil($totalContrats / $maxResults);
-
-        //Pagination pour les comptes
-        $pageComptes = $request->query->getInt('pageComptes', 1);
-        $maxResults = 3;
-        $firstResult = ($pageComptes - 1) * $maxResults;
-        $criteriaComptes = ['client' => $id];
-        $comptes = $entityManager->getRepository(CompteClient::class)
-            ->findBy($criteriaComptes, null, $maxResults, $firstResult);
-        $totalComptes = count($entityManager->getRepository(CompteClient::class)->findBy($criteriaComptes));
-        $totalPagesComptes = ceil($totalComptes / $maxResults);
+         //Pagination pour les contrats
+         $pageContrats = $request->query->getInt('pageContrats', 1);
+         $maxResults = 3;
+         $firstResult = ($pageContrats - 1) * $maxResults;
+         $criteriaContrats = ['client' => $id];
+         $contrats = $entityManager->getRepository(ContratClient::class)
+             ->findBy($criteriaContrats, null, $maxResults, $firstResult);
+         $totalContrats = count($entityManager->getRepository(ContratClient::class)->findBy($criteriaContrats));
+         $totalPagesContrats = ceil($totalContrats / $maxResults);
+ 
+         //Pagination pour les comptes
+         $pageComptes = $request->query->getInt('pageComptes', 1);
+         $maxResults = 3;
+         $firstResult = ($pageComptes - 1) * $maxResults;
+         $criteriaComptes = ['client' => $id];
+         $comptes = $entityManager->getRepository(CompteClient::class)
+             ->findBy($criteriaComptes, null, $maxResults, $firstResult);
+         $totalComptes = count($entityManager->getRepository(CompteClient::class)->findBy($criteriaComptes));
+         $totalPagesComptes = ceil($totalComptes / $maxResults);
 
         return $this->render('client/info.html.twig', [
             'client' => $client,
