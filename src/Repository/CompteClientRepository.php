@@ -23,13 +23,13 @@ class CompteClientRepository extends ServiceEntityRepository
 
     public function findTotalSoldeAtDate(\DateTimeInterface $date): float
     {
-        $qb = $this->createQueryBuilder('cc')
-            ->select('SUM(cc.solde) as totalSolde')
-            ->where('cc.dateOuverture >= :date')
-            ->setParameter('date', $date)
-            ->getQuery();
+        $qb = $this->createQueryBuilder('cc') 
+        ->select('SUM(cc.solde) as totalSolde')
+        ->where('cc.dateOuverture <= :date')
+        ->setParameter('date', $date->format('Y-m-d'))
+        ->getQuery();
 
-        return (float) $qb->getSingleScalarResult();
+return (float) $qb->getSingleScalarResult();
     }
 //    /**
 //     * @return CompteClient[] Returns an array of CompteClient objects
