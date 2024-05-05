@@ -25,3 +25,12 @@ Every command in the following list needs to be be executed in the project root 
  - Finally run the command: symfony server:start
 
 You can now launch your browser and type localhost:8000 to access ProjetBanqueWeb.
+
+## First connection
+
+Before starting the server, you must add an 'admin' user with the following command: 
+php bin/console doctrine:fixtures:load then 'yes'.
+
+His password is 'pasword1234' and his username is 'admin'.
+
+Now you can launch the application and, after authentication, you can add other profiles (Director, Agent and Advisor) and other functionalities.
